@@ -80,7 +80,7 @@ preview(UR_OBJECT user)
         sdsfree(text);
         return;
     }
-    if (strpbrk(word[1], "./")) {
+    if (strpbrk(word[1], PATH_FORBIDDEN_CHARS)) {
         write_user(user, "Sorry, there is no picture with that name.\n");
         return;
     }

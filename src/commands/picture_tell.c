@@ -81,7 +81,7 @@ picture_tell(UR_OBJECT user)
         return;
     }
 #endif
-    if (strpbrk(word[2], "./")) {
+    if (strpbrk(word[2], PATH_FORBIDDEN_CHARS)) {
         write_user(user, "Sorry, there is no picture with that name.\n");
         return;
     }

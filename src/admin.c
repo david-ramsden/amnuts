@@ -22,7 +22,9 @@
 void
 talker_shutdown(UR_OBJECT user, const char *str, int sdboot)
 {
+#ifndef __riscos
     static char *args[] = {progname, confile, NULL};
+#endif
     UR_OBJECT u, next;
 #ifdef NETLINKS
     NL_OBJECT nl, nlnext;
@@ -40,6 +42,14 @@ talker_shutdown(UR_OBJECT user, const char *str, int sdboot)
         write_syslog(SYSLOG, 0, "*** REBOOT initiated by %s ***\n", ptr);
         break;
     case 2:
+#ifdef __riscos
+        if (user) {
+            write_user(user,
+                    "Seamless reboot is not supported on RISC OS - use reboot instead.\n");
+        }
+        write_syslog(SYSLOG, 1, "*** SREBOOT: not supported on RISC OS ***\n");
+        return;
+#endif
         write_level(WIZ, 1, NORECORD,
                 "\007\n~OLSYSTEM:~FY~LI Seamless Rebooting now!!\n\n", NULL);
         write_room(NULL,
@@ -94,8 +104,22 @@ talker_shutdown(UR_OBJECT user, const char *str, int sdboot)
                 strerror(errno));
         exit(12);
 #else
-        write_syslog(SYSLOG, 0, "*** REBOOT not supported on RISC OS %s ***\n\n", long_date(1));
-        exit(12);
+        {
+            char cmd[1024];
+            /*
+             * On RISC OS, system() is synchronous so we cannot use it to
+             * restart a long-running server (it would block forever).
+             * Instead, use *TaskWindow which launches an independent Wimp
+             * task and returns immediately, then exit cleanly.
+             */
+            sprintf(cmd, "TaskWindow \"Run %s %s\"", progname, confile);
+            write_syslog(SYSLOG, 0, "*** REBOOT: launching new instance via TaskWindow: %s ***\n\n", cmd);
+            system(cmd);
+            printf("\n------------------------------------------------------------------------------\n");
+            printf("SERVER REBOOTING %s\n", long_date(1));
+            printf("------------------------------------------------------------------------------\n\n");
+            exit(0);
+        }
 #endif /* !__riscos */
     }
     write_syslog(SYSLOG, 0, "*** SHUTDOWN complete %s ***\n\n", long_date(1));

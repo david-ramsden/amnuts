@@ -46,7 +46,7 @@ display_files(UR_OBJECT user, int admins)
         return;
     }
     /* check for any illegal characters */
-    if (strpbrk(word[1], "./")) {
+    if (strpbrk(word[1], PATH_FORBIDDEN_CHARS)) {
         if (!admins) {
             write_user(user, "Sorry, there are no files with that name.\n");
         } else {

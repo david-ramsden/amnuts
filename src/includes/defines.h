@@ -42,8 +42,14 @@
  * "file extension" suffix because filenames cannot contain a literal '.'.
  * For example, the UNIX path "foo/bar.M" becomes "foo.bar/M" on RISC OS. */
 # define DIRSEP   "."
+# define DIRSEP_C '.'
 # define EXTSEP   "/"
 # define EXTSEP_C '/'
+/* RISC OS treats '.' (dir sep), '/' (ext sep), '^' (parent), '$' (root),
+ * '@' (CSD), '&' (URD), '%' (library), '<'/'>' (variable expansion), and
+ * '*'/'#' (wildcards) specially in a filename.  Block them all when
+ * accepting a leaf name from a user. */
+# define PATH_FORBIDDEN_CHARS "./^$@&%<>*#"
 #else
 # include <sys/types.h>
 # include <sys/wait.h>
@@ -69,8 +75,11 @@
 # include <string.h>
 # include <strings.h>
 # define DIRSEP   "/"
+# define DIRSEP_C '/'
 # define EXTSEP   "."
 # define EXTSEP_C '.'
+/* UNIX: "." catches ".." (parent), "/" catches the path separator. */
+# define PATH_FORBIDDEN_CHARS "./"
 #endif
 
 

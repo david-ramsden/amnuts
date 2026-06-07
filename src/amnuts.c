@@ -3434,8 +3434,8 @@ process_users(void)
     }
     /* count up how many files in the directory - this include . and .. */
     for (dp = readdir(dirp); dp; dp = readdir(dirp)) {
-        s = strchr(dp->d_name, '.');
-        if (!s || strcmp(s, ".D")) {
+        s = strchr(dp->d_name, EXTSEP_C);
+        if (!s || strcmp(s, EXTSEP "D")) {
             continue;
         }
         *u->name = '\0';

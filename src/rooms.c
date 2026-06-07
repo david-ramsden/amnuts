@@ -120,8 +120,8 @@ parse_user_rooms(void)
     }
     /* parse the names of the files but do not include . and .. */
     for (dp = readdir(dirp); dp; dp = readdir(dirp)) {
-        s = strchr(dp->d_name, '.');
-        if (!s || strcmp(s, ".R")) {
+        s = strchr(dp->d_name, EXTSEP_C);
+        if (!s || strcmp(s, EXTSEP "R")) {
             continue;
         }
         *name = '\0';
