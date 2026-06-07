@@ -27,9 +27,9 @@ display_files(UR_OBJECT user, int admins)
 
     if (word_count < 2) {
         if (!admins) {
-            sprintf(filename, "%s/%s", TEXTFILES, SHOWFILES);
+            sprintf(filename, "%s" DIRSEP "%s", TEXTFILES, SHOWFILES);
         } else {
-            sprintf(filename, "%s/%s/%s", TEXTFILES, ADMINFILES, SHOWFILES);
+            sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s", TEXTFILES, ADMINFILES, SHOWFILES);
         }
         ret = more(user, user->socket, filename);
         if (!ret) {
@@ -56,9 +56,9 @@ display_files(UR_OBJECT user, int admins)
     }
     /* show the file */
     if (!admins) {
-        sprintf(filename, "%s/%s", TEXTFILES, word[1]);
+        sprintf(filename, "%s" DIRSEP "%s", TEXTFILES, word[1]);
     } else {
-        sprintf(filename, "%s/%s/%s", TEXTFILES, ADMINFILES, word[1]);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s", TEXTFILES, ADMINFILES, word[1]);
     }
     ret = more(user, user->socket, filename);
     if (!ret) {

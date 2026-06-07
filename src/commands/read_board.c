@@ -56,9 +56,9 @@ read_board(UR_OBJECT user)
     }
     vwrite_user(user, "\n~BB*** The %s message board ***\n\n", rm->name);
     if (is_personal_room(rm)) {
-        sprintf(filename, "%s/%s/%s.B", USERFILES, USERROOMS, rm->owner);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, rm->owner);
     } else {
-        sprintf(filename, "%s/%s.B", DATAFILES, rm->name);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "B", DATAFILES, rm->name);
     }
     user->filepos = 0;
     ret = more(user, user->socket, filename);

@@ -67,9 +67,9 @@ write_board(UR_OBJECT user, char *inpstr)
         break;
     }
     if (is_personal_room(user->room)) {
-        sprintf(filename, "%s/%s/%s.B", USERFILES, USERROOMS, user->room->owner);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, user->room->owner);
     } else {
-        sprintf(filename, "%s/%s.B", DATAFILES, user->room->name);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "B", DATAFILES, user->room->name);
     }
     fp = fopen(filename, "a");
     if (!fp) {

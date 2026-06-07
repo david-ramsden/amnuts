@@ -135,9 +135,9 @@ site_banned(char *sbanned, int newban)
     int f;
 
     if (newban) {
-        sprintf(filename, "%s/%s", DATAFILES, NEWBAN);
+        sprintf(filename, "%s" DIRSEP "%s", DATAFILES, NEWBAN);
     } else {
-        sprintf(filename, "%s/%s", DATAFILES, SITEBAN);
+        sprintf(filename, "%s" DIRSEP "%s", DATAFILES, SITEBAN);
     }
     fp = fopen(filename, "r");
     if (!fp) {
@@ -185,7 +185,7 @@ user_banned(char *name)
     FILE *fp;
     int f;
 
-    sprintf(filename, "%s/%s", DATAFILES, USERBAN);
+    sprintf(filename, "%s" DIRSEP "%s", DATAFILES, USERBAN);
     fp = fopen(filename, "r");
     if (!fp) {
         return 0;
@@ -210,7 +210,7 @@ auto_ban_site(char *asite)
     FILE *fp;
     UR_OBJECT u, next;
 
-    sprintf(filename, "%s/%s", DATAFILES, SITEBAN);
+    sprintf(filename, "%s" DIRSEP "%s", DATAFILES, SITEBAN);
     /* Write new ban to file */
     fp = fopen(filename, "a");
     if (!fp) {
@@ -278,7 +278,7 @@ ban_site(UR_OBJECT user)
                 "You cannot ban the machine that that program is running on.\n");
         return;
     }
-    sprintf(filename, "%s/%s", DATAFILES, SITEBAN);
+    sprintf(filename, "%s" DIRSEP "%s", DATAFILES, SITEBAN);
     /* See if ban already set for given site */
     fp = fopen(filename, "r");
     if (fp) {
@@ -329,7 +329,7 @@ ban_user(UR_OBJECT user)
         return;
     }
     /* See if ban already set for given user */
-    sprintf(filename, "%s/%s", DATAFILES, USERBAN);
+    sprintf(filename, "%s" DIRSEP "%s", DATAFILES, USERBAN);
     fp = fopen(filename, "r");
     if (fp) {
         int f;
@@ -422,7 +422,7 @@ ban_new(UR_OBJECT user)
                 "You cannot ban the machine that that program is running on.\n");
         return;
     }
-    sprintf(filename, "%s/%s", DATAFILES, NEWBAN);
+    sprintf(filename, "%s" DIRSEP "%s", DATAFILES, NEWBAN);
     /* See if ban already set for given site */
     fp = fopen(filename, "r");
     if (fp) {
@@ -467,7 +467,7 @@ unban_site(UR_OBJECT user)
     FILE *infp, *outfp;
     int found, cnt, f;
 
-    sprintf(filename, "%s/%s", DATAFILES, SITEBAN);
+    sprintf(filename, "%s" DIRSEP "%s", DATAFILES, SITEBAN);
     infp = fopen(filename, "r");
     if (!infp) {
         write_user(user, "That site or domain is not currently banned.\n");
@@ -515,7 +515,7 @@ unban_user(UR_OBJECT user)
     FILE *infp, *outfp;
     int found, cnt, f;
 
-    sprintf(filename, "%s/%s", DATAFILES, USERBAN);
+    sprintf(filename, "%s" DIRSEP "%s", DATAFILES, USERBAN);
     infp = fopen(filename, "r");
     if (!infp) {
         write_user(user, "That user is not currently banned.\n");
@@ -567,7 +567,7 @@ unban_new(UR_OBJECT user)
     FILE *infp, *outfp;
     int found, cnt, f;
 
-    sprintf(filename, "%s/%s", DATAFILES, NEWBAN);
+    sprintf(filename, "%s" DIRSEP "%s", DATAFILES, NEWBAN);
     infp = fopen(filename, "r");
     if (!infp) {
         write_user(user,
@@ -920,7 +920,7 @@ set_xgcom(UR_OBJECT user, UR_OBJECT u, int id, int banned, int set)
     }
     xgcom[i] = value;
     /* write out the commands to a file */
-    sprintf(filename, "%s/%s/%s.C", USERFILES, USERCOMMANDS, u->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "C", USERFILES, USERCOMMANDS, u->name);
     fp = fopen(filename, "w");
     if (!fp) {
         write_user(user, "ERROR: Unable to open the command list file.\n");
@@ -964,7 +964,7 @@ get_xgcoms(UR_OBJECT user)
     int type;
     size_t xi, gi;
 
-    sprintf(filename, "%s/%s/%s.C", USERFILES, USERCOMMANDS, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "C", USERFILES, USERCOMMANDS, user->name);
     fp = fopen(filename, "r");
     if (!fp) {
         return 0;

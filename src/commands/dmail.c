@@ -41,7 +41,7 @@ dmail(UR_OBJECT user)
         write_user(user, "You have no mail to delete.\n");
         return;
     }
-    sprintf(filename, "%s/%s/%s.M", USERFILES, USERMAILS, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, user->name);
     if (user->wipe_from == -1) {
         write_user(user, "\07~OL~FR~LIDelete all of your mail?~RS (y/n): ");
         user->misc_op = 18;

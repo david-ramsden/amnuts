@@ -135,9 +135,9 @@ personal_room_admin(UR_OBJECT user)
         *word[2] = toupper(*word[2]);
         /* delete all files */
         if (!strcmp(word[1], "-d")) {
-            filename = sdscatfmt(sdsempty(), "%s/%s/%s.R", USERFILES, USERROOMS, word[2]);
+            filename = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "R", USERFILES, USERROOMS, word[2]);
             remove(filename);
-            filename = sdscatfmt(sdsempty(), "%s/%s/%s.B", USERFILES, USERROOMS, word[2]);
+            filename = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, word[2]);
             remove(filename);
             sdsfree(filename);
             write_syslog(SYSLOG, 1, "%s deleted the personal room of %s.\n",

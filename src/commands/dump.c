@@ -54,7 +54,7 @@ dump_to_file(UR_OBJECT user)
             write_user(user, "Usage: dump -r <rank>\n");
             return;
         }
-        sprintf(filename, "%s/%s.dump", DUMPFILES, user_level[lvl].name);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "dump", DUMPFILES, user_level[lvl].name);
         fp = fopen(filename, "w");
         if (!fp) {
             write_user(user,
@@ -91,7 +91,7 @@ dump_to_file(UR_OBJECT user)
     }
     /* check to see if -u switch was used : dump all users */
     if (!strcmp("-u", word[1])) {
-        sprintf(filename, "%s/users.dump", DUMPFILES);
+        sprintf(filename, "%s" DIRSEP "users" EXTSEP "dump", DUMPFILES);
         fp = fopen(filename, "w");
         if (!fp) {
             write_user(user,
@@ -124,7 +124,7 @@ dump_to_file(UR_OBJECT user)
     }
     /* check to see if -c switch was used : dump last few commands used */
     if (!strcmp("-c", word[1])) {
-        sprintf(filename, "%s/commands.dump", DUMPFILES);
+        sprintf(filename, "%s" DIRSEP "commands" EXTSEP "dump", DUMPFILES);
         fp = fopen(filename, "w");
         if (!fp) {
             write_user(user,
@@ -151,7 +151,7 @@ dump_to_file(UR_OBJECT user)
     }
     /* check to see if -m was used : dump memory currently being used */
     if (!strcmp("-m", word[1])) {
-        sprintf(filename, "%s/memory.dump", DUMPFILES);
+        sprintf(filename, "%s" DIRSEP "memory" EXTSEP "dump", DUMPFILES);
         fp = fopen(filename, "w");
         if (!fp) {
             write_user(user,
@@ -228,7 +228,7 @@ dump_to_file(UR_OBJECT user)
     }
     /* check to see if -s switch was used : show system details */
     if (!strcmp("-s", word[1])) {
-        sprintf(filename, "%s/system.dump", DUMPFILES);
+        sprintf(filename, "%s" DIRSEP "system" EXTSEP "dump", DUMPFILES);
         fp = fopen(filename, "w");
         if (!fp) {
             write_user(user,

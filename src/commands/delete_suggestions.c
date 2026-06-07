@@ -36,7 +36,7 @@ delete_suggestions(UR_OBJECT user)
         write_user(user, "There are no suggestions to delete.\n");
         return;
     }
-    sprintf(filename, "%s/%s", MISCFILES, SUGBOARD);
+    sprintf(filename, "%s" DIRSEP "%s", MISCFILES, SUGBOARD);
     if (user->wipe_from == -1) {
         remove(filename);
         write_user(user, "All suggestions deleted.\n");

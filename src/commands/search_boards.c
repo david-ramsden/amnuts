@@ -36,9 +36,9 @@ search_boards(UR_OBJECT user)
             continue;
         }
         if (is_personal_room(rm)) {
-            sprintf(filename, "%s/%s/%s.B", USERFILES, USERROOMS, rm->owner);
+            sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, rm->owner);
         } else {
-            sprintf(filename, "%s/%s.B", DATAFILES, rm->name);
+            sprintf(filename, "%s" DIRSEP "%s" EXTSEP "B", DATAFILES, rm->name);
         }
         fp = fopen(filename, "r");
         if (!fp) {

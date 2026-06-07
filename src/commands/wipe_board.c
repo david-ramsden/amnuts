@@ -56,9 +56,9 @@ wipe_board(UR_OBJECT user)
     }
     name = user->vis ? user->recap : invisname;
     if (is_personal_room(rm)) {
-        sprintf(filename, "%s/%s/%s.B", USERFILES, USERROOMS, rm->owner);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, rm->owner);
     } else {
-        sprintf(filename, "%s/%s.B", DATAFILES, rm->name);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "B", DATAFILES, rm->name);
     }
     if (!rm->mesg_cnt) {
         write_user(user, "There are no messages on the room board.\n");

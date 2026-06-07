@@ -38,8 +38,12 @@
 # include <stdio.h>
 # include <ctype.h>
 # include <string.h>
-/* RISC OS uses '.' as directory separator */
-# define DIRSEP "."
+/* RISC OS uses '.' as directory separator and '/' substitutes for the
+ * "file extension" suffix because filenames cannot contain a literal '.'.
+ * For example, the UNIX path "foo/bar.M" becomes "foo.bar/M" on RISC OS. */
+# define DIRSEP   "."
+# define EXTSEP   "/"
+# define EXTSEP_C '/'
 #else
 # include <sys/types.h>
 # include <sys/wait.h>
@@ -64,7 +68,9 @@
 # include <ctype.h>
 # include <string.h>
 # include <strings.h>
-# define DIRSEP "/"
+# define DIRSEP   "/"
+# define EXTSEP   "."
+# define EXTSEP_C '.'
 #endif
 
 

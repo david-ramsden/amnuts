@@ -22,7 +22,7 @@ rmail(UR_OBJECT user)
     char filename[80];
     int ret;
 
-    sprintf(filename, "%s/%s/%s.M", USERFILES, USERMAILS, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, user->name);
 
     /* Just reading the one message or all new mail */
     if (word_count > 1) {

@@ -33,7 +33,7 @@ user_history(UR_OBJECT user)
     strcpy(name, u->name);
     done_retrieve(u);
     /* show file */
-    sprintf(filename, "%s/%s/%s.H", USERFILES, USERHISTORYS, name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "H", USERFILES, USERHISTORYS, name);
     vwrite_user(user,
             "~FG*** The history of user ~OL%s~RS~FG is as follows ***\n\n",
             name);

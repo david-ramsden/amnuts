@@ -25,7 +25,7 @@ count_suggestions(void)
     FILE *fp;
     int valid;
 
-    sprintf(filename, "%s/%s", MISCFILES, SUGBOARD);
+    sprintf(filename, "%s" DIRSEP "%s", MISCFILES, SUGBOARD);
     fp = fopen(filename, "r");
     if (!fp) {
         return;
@@ -63,7 +63,7 @@ count_motds(int forcecnt)
     amsys->motd2_cnt = 0;
     for (i = 1; i <= 2; ++i) {
         /* open the directory file up */
-        sprintf(filename, "%s/motd%d", MOTDFILES, i);
+        sprintf(filename, "%s" DIRSEP "motd%d", MOTDFILES, i);
         dirp = opendir(filename);
         if (!dirp) {
             if (!forcecnt) {
@@ -139,7 +139,7 @@ send_mail(UR_OBJECT user, char *to, char *ptr, int iscopy)
         return 0;
     }
     /* Copy current mail file into tempfile if it exists */
-    sprintf(filename, "%s/%s/%s.M", USERFILES, USERMAILS, to);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, to);
     /* but first get the original sizes and write those to the temp file */
     amount = mail_sizes(to, 1); /* amount of new mail */
     if (!amount) {
@@ -230,7 +230,7 @@ read_specific_mail(UR_OBJECT user)
         write_user(user, "You do not have any mail.\n");
         return;
     }
-    sprintf(filename, "%s/%s/%s.M", USERFILES, USERMAILS, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, user->name);
     fp = fopen(filename, "r");
     if (!fp) {
         write_user(user, "There was an error trying to read your mailbox.\n");
@@ -295,7 +295,7 @@ read_new_mail(UR_OBJECT user)
             write_user(user, "You do not have any mail.\n");
             return;
         }
-        sprintf(filename, "%s/%s/%s.M", USERFILES, USERMAILS, user->name);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, user->name);
         write_user(user,
                 "\n~BB*** These are the new mail messages you have in your mailbox ***\n\n");
         more(user, user->socket, filename);
@@ -308,7 +308,7 @@ read_new_mail(UR_OBJECT user)
         write_user(user, "You do not have any mail.\n");
         return;
     }
-    sprintf(filename, "%s/%s/%s.M", USERFILES, USERMAILS, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, user->name);
     write_user(user,
             "\n~BB*** These are the new mail messages you have in your mailbox ***\n\n");
     if (more(user, user->socket, filename) != 1) {
@@ -371,7 +371,7 @@ send_broadcast_mail(UR_OBJECT user, char *ptr, enum lvl_value lvl, int all)
             continue;
         }
         /* Write current time on first line of tempfile */
-        sprintf(filename, "%s/%s/%s.M", USERFILES, USERMAILS, entry->name);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, entry->name);
         /* first get old file size if any new mail, and also new mail count */
         amount = mail_sizes(entry->name, 1);
         if (!amount) {
@@ -438,7 +438,7 @@ mail_sizes(char *name, int type)
 
     cnt = newcnt = size = 0;
     *name = toupper(*name);
-    sprintf(filename, "%s/%s/%s.M", USERFILES, USERMAILS, name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, name);
     fp = fopen(filename, "r");
     if (!fp) {
         return cnt;
@@ -477,7 +477,7 @@ reset_mail_counts(UR_OBJECT user)
     FILE *infp, *outfp;
     int c, size, tmp1, tmp2;
 
-    sprintf(filename, "%s/%s/%s.M", USERFILES, USERMAILS, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, user->name);
     /* get file size */
     size = stat(filename, &stbuf) == -1 ? 0 : stbuf.st_size;
     infp = fopen(filename, "r");
@@ -527,7 +527,7 @@ set_forward_email(UR_OBJECT user)
     user->mail_verified = 0;
     user->autofwd = 0;
     /* Let them know by email */
-    sprintf(filename, "%s/%s.FWD", MAILSPOOL, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" EXTSEP "FWD", MAILSPOOL, user->name);
     fp = fopen(filename, "w");
     if (!fp) {
         write_syslog(SYSLOG, 0,
@@ -616,7 +616,7 @@ forward_email(char *name, char *from, char *message)
         }
         return;
     }
-    sprintf(filename, "%s/%s.FWD", MAILSPOOL, u->name);
+    sprintf(filename, "%s" DIRSEP "%s" EXTSEP "FWD", MAILSPOOL, u->name);
     fp = fopen(filename, "w");
     if (!fp) {
         write_syslog(SYSLOG, 0,
@@ -759,9 +759,9 @@ read_board_specific(UR_OBJECT user, RM_OBJECT rm, int msg_number)
         return;
     }
     if (is_personal_room(rm)) {
-        sprintf(filename, "%s/%s/%s.B", USERFILES, USERROOMS, rm->owner);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, rm->owner);
     } else {
-        sprintf(filename, "%s/%s.B", DATAFILES, rm->name);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "B", DATAFILES, rm->name);
     }
     fp = fopen(filename, "r");
     if (!fp) {
@@ -838,9 +838,9 @@ check_board_wipe(UR_OBJECT user)
         return 0;
     }
     if (is_personal_room(rm)) {
-        sprintf(filename, "%s/%s/%s.B", USERFILES, USERROOMS, rm->owner);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, rm->owner);
     } else {
-        sprintf(filename, "%s/%s.B", DATAFILES, rm->name);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "B", DATAFILES, rm->name);
     }
     fp = fopen(filename, "r");
     if (!fp) {
@@ -912,9 +912,9 @@ board_from(UR_OBJECT user)
         return;
     }
     if (is_personal_room(rm)) {
-        sprintf(filename, "%s/%s/%s.B", USERFILES, USERROOMS, rm->owner);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, rm->owner);
     } else {
-        sprintf(filename, "%s/%s.B", DATAFILES, rm->name);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "B", DATAFILES, rm->name);
     }
     fp = fopen(filename, "r");
     if (!fp) {

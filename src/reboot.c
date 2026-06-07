@@ -160,7 +160,7 @@ build_loggedin_users_info(UR_OBJECT user)
         }
         /* save editor information */
         if (u->malloc_start) {
-            sprintf(filename, "%s/%s.edit", REBOOTING_DIR, u->name);
+            sprintf(filename, "%s" DIRSEP "%s" EXTSEP "edit", REBOOTING_DIR, u->name);
             f = fopen(filename, "w");
             if (!f) {
                 write_user(u,
@@ -175,7 +175,7 @@ build_loggedin_users_info(UR_OBJECT user)
             u->malloc_start = u->malloc_end = NULL;
         }
         /* finally, save user information */
-        sprintf(text, "%s/%s", REBOOTING_DIR, u->name);
+        sprintf(text, "%s" DIRSEP "%s", REBOOTING_DIR, u->name);
         f = fopen(text, "w");
         if (!f) {
             if (user) {
@@ -208,7 +208,7 @@ build_pager_info(UR_OBJECT user)
     FILE *fp;
     PM_OBJECT t;
 
-    sprintf(text, "%s/%s.pager", REBOOTING_DIR, user->name);
+    sprintf(text, "%s" DIRSEP "%s" EXTSEP "pager", REBOOTING_DIR, user->name);
     fp = fopen(text, "w");
     if (!fp) {
         while (user->pm_first) {
@@ -259,7 +259,7 @@ build_review_buffer_info(UR_OBJECT user)
     if (!user->rb_first) {
         return 0;
     }
-    sprintf(text, "%s/%s.review", REBOOTING_DIR, user->name);
+    sprintf(text, "%s" DIRSEP "%s" EXTSEP "review", REBOOTING_DIR, user->name);
     fp = fopen(text, "w");
     if (!fp) {
         write_syslog(SYSLOG | ERRLOG, 1,
@@ -292,7 +292,7 @@ build_room_info(UR_OBJECT user)
         if (!u->room) {
             continue;
         }
-        sprintf(text, "%s/%s.room", REBOOTING_DIR, u->room->name);
+        sprintf(text, "%s" DIRSEP "%s" EXTSEP "room", REBOOTING_DIR, u->room->name);
         f = fopen(text, "w");
         if (!f) {
             if (user) {
@@ -322,7 +322,7 @@ build_ident_info(void)
 {
     FILE *fp;
 
-    sprintf(text, "%s/ident_socket", REBOOTING_DIR);
+    sprintf(text, "%s" DIRSEP "ident_socket", REBOOTING_DIR);
     fp = fopen(text, "w");
     if (!fp) {
         return -1;
@@ -630,7 +630,7 @@ retrieve_rooms(void)
         return;
     }
     for (fc = fscanf(f, "%s", rmname); fc == 1; fc = fscanf(f, "%s", rmname)) {
-        sprintf(text, "%s/%s.room", REBOOTING_DIR, rmname);
+        sprintf(text, "%s" DIRSEP "%s" EXTSEP "room", REBOOTING_DIR, rmname);
         pf = fopen(text, "r");
         if (!pf) {
             write_syslog(SYSLOG | ERRLOG, 0,
@@ -668,7 +668,7 @@ retrieve_users(void)
     }
     for (fc = fscanf(f, "%s %s", name, rmname); fc == 2;
             fc = fscanf(f, "%s %s", name, rmname)) {
-        sprintf(text, "%s/%s", REBOOTING_DIR, name);
+        sprintf(text, "%s" DIRSEP "%s", REBOOTING_DIR, name);
         pf = fopen(text, "r");
         if (!pf) {
             write_syslog(SYSLOG | ERRLOG, 0,
@@ -691,7 +691,7 @@ retrieve_users(void)
         u->room = !room ? room_first : room;
         record_last_login(u->name);
         /* editor buffer */
-        sprintf(filename, "%s/%s.edit", REBOOTING_DIR, u->name);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "edit", REBOOTING_DIR, u->name);
         pf = fopen(filename, "r");
         if (pf) {
             u->malloc_start = (char *) malloc(MAX_LINES * 81);
@@ -706,7 +706,7 @@ retrieve_users(void)
             fclose(pf);
         }
         /* pager buffer */
-        sprintf(filename, "%s/%s.pager", REBOOTING_DIR, u->name);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "pager", REBOOTING_DIR, u->name);
         pf = fopen(filename, "r");
         if (pf) {
             /* get current page count */
@@ -733,7 +733,7 @@ retrieve_users(void)
         /* flagged users */
         load_flagged_users(u);
         /* review buffer */
-        sprintf(filename, "%s/%s.review", REBOOTING_DIR, u->name);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "review", REBOOTING_DIR, u->name);
         pf = fopen(filename, "r");
         if (pf) {
             /* get data */
@@ -762,7 +762,7 @@ retrieve_ident(void)
 {
     FILE *fp;
 
-    sprintf(text, "%s/ident_socket", REBOOTING_DIR);
+    sprintf(text, "%s" DIRSEP "ident_socket", REBOOTING_DIR);
     fp = fopen(text, "r");
     if (!fp) {
         return;

@@ -36,7 +36,7 @@ reload_room_description(UR_OBJECT user)
             if (is_personal_room(rm)) {
                 continue;
             }
-            sprintf(filename, "%s/%s.R", DATAFILES, rm->name);
+            sprintf(filename, "%s" DIRSEP "%s" EXTSEP "R", DATAFILES, rm->name);
             fp = fopen(filename, "r");
             if (!fp) {
                 vwrite_user(user,
@@ -88,7 +88,7 @@ reload_room_description(UR_OBJECT user)
                 "Sorry, but you cannot reload personal room descriptions.\n");
         return;
     }
-    sprintf(filename, "%s/%s.R", DATAFILES, rm->name);
+    sprintf(filename, "%s" DIRSEP "%s" EXTSEP "R", DATAFILES, rm->name);
     fp = fopen(filename, "r");
     if (!fp) {
         vwrite_user(user,

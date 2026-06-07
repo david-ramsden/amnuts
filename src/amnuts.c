@@ -581,7 +581,7 @@ check_directories(void)
         fprintf(stderr, "Amnuts: Directory structure is incorrect.\n");
         boot_exit(16);
     }
-    sprintf(dirname, "%s/%s", USERFILES, USERMAILS);
+    sprintf(dirname, "%s" DIRSEP "%s", USERFILES, USERMAILS);
     if (stat(dirname, &stbuf) == -1) {
         fprintf(stderr,
                 "Amnuts: Directory stat failure in check_directories().\n");
@@ -591,7 +591,7 @@ check_directories(void)
         fprintf(stderr, "Amnuts: Directory structure is incorrect.\n");
         boot_exit(16);
     }
-    sprintf(dirname, "%s/%s", USERFILES, USERPROFILES);
+    sprintf(dirname, "%s" DIRSEP "%s", USERFILES, USERPROFILES);
     if (stat(dirname, &stbuf) == -1) {
         fprintf(stderr,
                 "Amnuts: Directory stat failure in check_directories().\n");
@@ -601,7 +601,7 @@ check_directories(void)
         fprintf(stderr, "Amnuts: Directory structure is incorrect.\n");
         boot_exit(16);
     }
-    sprintf(dirname, "%s/%s", USERFILES, USERHISTORYS);
+    sprintf(dirname, "%s" DIRSEP "%s", USERFILES, USERHISTORYS);
     if (stat(dirname, &stbuf) == -1) {
         fprintf(stderr,
                 "Amnuts: Directory stat failure in check_directories().\n");
@@ -611,7 +611,7 @@ check_directories(void)
         fprintf(stderr, "Amnuts: Directory structure is incorrect.\n");
         boot_exit(16);
     }
-    sprintf(dirname, "%s/%s", USERFILES, USERCOMMANDS);
+    sprintf(dirname, "%s" DIRSEP "%s", USERFILES, USERCOMMANDS);
     if (stat(dirname, &stbuf) == -1) {
         fprintf(stderr,
                 "Amnuts: Directory stat failure in check_directories().\n");
@@ -621,7 +621,7 @@ check_directories(void)
         fprintf(stderr, "Amnuts: Directory structure is incorrect.\n");
         boot_exit(16);
     }
-    sprintf(dirname, "%s/%s", USERFILES, USERMACROS);
+    sprintf(dirname, "%s" DIRSEP "%s", USERFILES, USERMACROS);
     if (stat(dirname, &stbuf) == -1) {
         fprintf(stderr,
                 "Amnuts: Directory stat failure in check_directories().\n");
@@ -631,7 +631,7 @@ check_directories(void)
         fprintf(stderr, "Amnuts: Directory structure is incorrect.\n");
         boot_exit(16);
     }
-    sprintf(dirname, "%s/%s", USERFILES, USERROOMS);
+    sprintf(dirname, "%s" DIRSEP "%s", USERFILES, USERROOMS);
     if (stat(dirname, &stbuf) == -1) {
         fprintf(stderr,
                 "Amnuts: Directory stat failure in check_directories().\n");
@@ -836,7 +836,7 @@ accept_connection(int lsock)
     }
     /* get random motd1 and send  pre-login message */
     if (amsys->motd1_cnt) {
-        sprintf(motdname, "%s/motd1/motd%d", MOTDFILES, (get_motd_num(1)));
+        sprintf(motdname, "%s" DIRSEP "motd1" DIRSEP "motd%d", MOTDFILES, (get_motd_num(1)));
         more(NULL, accept_sock, motdname);
     } else {
         sprintf(text,
@@ -1057,7 +1057,7 @@ load_and_parse_config(void)
 #endif
 
     printf("Parsing config file \"%s\"...\n", confile);
-    sprintf(filename, "%s/%s", DATAFILES, confile);
+    sprintf(filename, "%s" DIRSEP "%s", DATAFILES, confile);
     fp = fopen(filename, "r");
     if (!fp) {
         perror("Amnuts: Cannot open config file");
@@ -1248,7 +1248,7 @@ load_and_parse_config(void)
 
     /* Load room descriptions */
     for (rm1 = room_first; rm1; rm1 = rm1->next) {
-        sprintf(filename, "%s/%s.R", DATAFILES, rm1->name);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "R", DATAFILES, rm1->name);
         fp = fopen(filename, "r");
         if (!fp) {
             fprintf(stderr, "Amnuts: Cannot open description file for room %s.\n",
@@ -2665,7 +2665,7 @@ load_user_details(UR_OBJECT user)
     FILE *fp;
     int wcnt, wpos, damaged, version_found;
 
-    sprintf(filename, "%s/%s.D", USERFILES, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" EXTSEP "D", USERFILES, user->name);
     fp = fopen(filename, "r");
     if (!fp) {
         return 0;
@@ -3055,7 +3055,7 @@ save_user_details(UR_OBJECT user, int save_current)
     if (user->type == REMOTE_TYPE || user->type == CLONE_TYPE) {
         return 0;
     }
-    sprintf(filename, "%s/%s.D", USERFILES, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" EXTSEP "D", USERFILES, user->name);
     fp = fopen(filename, "w");
     if (!fp) {
         vwrite_user(user, "%s: failed to save your details.\n", syserror);
@@ -3149,7 +3149,7 @@ load_user_details_old(UR_OBJECT user)
     FILE *fp;
     int temp1, temp2, temp3, temp4;
 
-    sprintf(filename, "%s/%s.D", USERFILES, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" EXTSEP "D", USERFILES, user->name);
     fp = fopen(filename, "r");
     if (!fp) {
         return 0;
@@ -3288,7 +3288,7 @@ load_oldversion_user(UR_OBJECT user, int version)
     int temp1, temp2, temp3, temp4, oldvote;
 
     reset_user(user); /* make sure reads in fresh */
-    sprintf(filename, "%s/%s.D", USERFILES, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" EXTSEP "D", USERFILES, user->name);
     fp = fopen(filename, "r");
     if (!fp) {
         return 0;
@@ -3492,25 +3492,25 @@ clean_files(char *name)
     char filename[80];
 
     *name = toupper(*name);
-    sprintf(filename, "%s/%s.D", USERFILES, name);
+    sprintf(filename, "%s" DIRSEP "%s" EXTSEP "D", USERFILES, name);
     remove(filename);
-    sprintf(filename, "%s/%s/%s.M", USERFILES, USERMAILS, name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, name);
     remove(filename);
-    sprintf(filename, "%s/%s/%s.P", USERFILES, USERPROFILES, name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "P", USERFILES, USERPROFILES, name);
     remove(filename);
-    sprintf(filename, "%s/%s/%s.H", USERFILES, USERHISTORYS, name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "H", USERFILES, USERHISTORYS, name);
     remove(filename);
-    sprintf(filename, "%s/%s/%s.C", USERFILES, USERCOMMANDS, name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "C", USERFILES, USERCOMMANDS, name);
     remove(filename);
-    sprintf(filename, "%s/%s/%s.MAC", USERFILES, USERMACROS, name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "MAC", USERFILES, USERMACROS, name);
     remove(filename);
-    sprintf(filename, "%s/%s/%s.R", USERFILES, USERROOMS, name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "R", USERFILES, USERROOMS, name);
     remove(filename);
-    sprintf(filename, "%s/%s/%s.B", USERFILES, USERROOMS, name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, name);
     remove(filename);
-    sprintf(filename, "%s/%s/%s.REM", USERFILES, USERREMINDERS, name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "REM", USERFILES, USERREMINDERS, name);
     remove(filename);
-    sprintf(filename, "%s/%s/%s.U", USERFILES, USERFLAGGED, name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "U", USERFILES, USERFLAGGED, name);
     remove(filename);
 }
 
@@ -4084,22 +4084,22 @@ write_syslog(int type, int write_time, const char *str, ...)
     strftime(dstr, 32, "%Y%m%d", localtime(&amsys->boot_time));
     type &= amsys->logging; /* Do not log to turned off logs */
     if (type & SYSLOG) {
-        sprintf(filename, "%s/%s.%s", LOGFILES, MAINSYSLOG, dstr);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, MAINSYSLOG, dstr);
         /* even if do_write_syslog fails, continue in case trying to write to others */
         do_write_syslog(filename);
     }
     if (type & REQLOG) {
-        sprintf(filename, "%s/%s.%s", LOGFILES, REQSYSLOG, dstr);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, REQSYSLOG, dstr);
         do_write_syslog(filename);
     }
 #ifdef NETLINKS
     if (type & NETLOG) {
-        sprintf(filename, "%s/%s.%s", LOGFILES, NETSYSLOG, dstr);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, NETSYSLOG, dstr);
         do_write_syslog(filename);
     }
 #endif
     if (type & ERRLOG) {
-        sprintf(filename, "%s/%s.%s", LOGFILES, ERRSYSLOG, dstr);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, ERRSYSLOG, dstr);
         do_write_syslog(filename);
     }
 }
@@ -4152,7 +4152,7 @@ dump_commands(int sig)
     int i, j;
 
     strftime(dstr, 32, "%Y%m%d", localtime(&amsys->boot_time));
-    filename = sdscatfmt(sdsempty(), "%s/%s.%s", LOGFILES, LAST_CMD, dstr);
+    filename = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, LAST_CMD, dstr);
     fp = fopen(filename, "w");
     if (!fp) {
         sdsfree(filename);
@@ -4438,7 +4438,7 @@ add_history(char *username, int showtime, const char *str, ...)
     time_t now;
 
     strtoname(username);
-    filename = sdscatfmt(sdsempty(), "%s/%s/%s.H", USERFILES, USERHISTORYS, username);
+    filename = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "H", USERFILES, USERHISTORYS, username);
     fp = fopen(filename, "a");
     if (!fp) {
         sdsfree(filename);
@@ -4606,7 +4606,7 @@ login(UR_OBJECT user, char *inpstr)
             }
             strcpy(user->pass, crypt(passwd, crypt_salt));
             write_user(user, "\n");
-            sprintf(filename, "%s/%s", MISCFILES, RULESFILE);
+            sprintf(filename, "%s" DIRSEP "%s", MISCFILES, RULESFILE);
             if (more(NULL, user->socket, filename)) {
                 write_user(user,
                         "\nBy typing your password in again you are accepting the above rules.\n");
@@ -4638,7 +4638,7 @@ login(UR_OBJECT user, char *inpstr)
             cls(user);
             /* If there is no motd2 files then do not display them */
             if (amsys->motd2_cnt) {
-                sprintf(motdname, "%s/motd2/motd%d", MOTDFILES, (get_motd_num(2)));
+                sprintf(motdname, "%s" DIRSEP "motd2" DIRSEP "motd%d", MOTDFILES, (get_motd_num(2)));
                 more(user, user->socket, motdname);
             }
             write_user(user, "Press return to continue: ");
@@ -4677,7 +4677,7 @@ login(UR_OBJECT user, char *inpstr)
         cls(user);
         /* If there is no motd2 files then do not display them */
         if (amsys->motd2_cnt) {
-            sprintf(motdname, "%s/motd2/motd%d", MOTDFILES, (get_motd_num(2)));
+            sprintf(motdname, "%s" DIRSEP "motd2" DIRSEP "motd%d", MOTDFILES, (get_motd_num(2)));
             more(user, user->socket, motdname);
         }
         write_user(user, "Press return to continue: ");
@@ -5341,7 +5341,7 @@ misc_ops(UR_OBJECT user, char *inpstr)
 
     case 18:
         if (tolower(*inpstr) == 'y') {
-            sprintf(filename, "%s/%s/%s.M", USERFILES, USERMAILS, user->name);
+            sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, user->name);
             remove(filename);
             write_user(user, "\n~OL~FRAll mail messages deleted.\n\n");
         } else {
@@ -5632,7 +5632,7 @@ exec_com(UR_OBJECT user, char *inpstr, enum cmd_value defaultcmd)
         shutdown_com(user);
         break;
     case NEWS:
-        sprintf(filename, "%s/%s", MISCFILES, NEWSFILE);
+        sprintf(filename, "%s" DIRSEP "%s", MISCFILES, NEWSFILE);
         switch (more(user, user->socket, filename)) {
         case 0:
             write_user(user, "There is no news.\n");
@@ -5754,7 +5754,7 @@ exec_com(UR_OBJECT user, char *inpstr, enum cmd_value defaultcmd)
                     "You do not need a map--where you are is where it is at!\n");
             return 0;
         }
-        sprintf(filename, "%s/%s.map", DATAFILES, user->room->map);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "map", DATAFILES, user->room->map);
         switch (more(user, user->socket, filename)) {
         case 0:
             write_user(user,
@@ -5935,7 +5935,7 @@ exec_com(UR_OBJECT user, char *inpstr, enum cmd_value defaultcmd)
         macros(user);
         break;
     case RULES:
-        sprintf(filename, "%s/%s", MISCFILES, RULESFILE);
+        sprintf(filename, "%s" DIRSEP "%s", MISCFILES, RULESFILE);
         switch (more(user, user->socket, filename)) {
         case 0:
             write_user(user, "\nThere are currrently no rules...\n");
@@ -6166,7 +6166,7 @@ exec_com(UR_OBJECT user, char *inpstr, enum cmd_value defaultcmd)
         personal_room_bgone(user);
         break;
     case WIZRULES:
-        sprintf(filename, "%s/%s", MISCFILES, WIZRULESFILE);
+        sprintf(filename, "%s" DIRSEP "%s", MISCFILES, WIZRULESFILE);
         switch (more(user, user->socket, filename)) {
         case 0:
             write_user(user, "\nThere are currrently no admin rules...\n");
@@ -6513,7 +6513,7 @@ get_macros(UR_OBJECT user)
         return;
     }
 #endif
-    sprintf(filename, "%s/%s/%s.MAC", USERFILES, USERMACROS, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "MAC", USERFILES, USERMACROS, user->name);
 
     fp = fopen(filename, "r");
     if (!fp) {
@@ -6565,7 +6565,7 @@ check_macros(UR_OBJECT user, char *inpstr)
         *user->macros[macnum] = '\0';
         strncat(user->macros[macnum], inpstr + 3, MACRO_LEN - 1);
         *inpstr = '\0';
-        sprintf(filename, "%s/%s/%s.MAC", USERFILES, USERMACROS, user->name);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "MAC", USERFILES, USERMACROS, user->name);
         fp = fopen(filename, "w");
         if (!fp) {
             write_user(user, "Your macro file could not be accessed.\n");
@@ -6887,7 +6887,7 @@ read_user_reminders(UR_OBJECT user)
     int dd, mm, yy, alert;
     int ln, i;
 
-    sprintf(filename, "%s/%s/%s.REM", USERFILES, USERREMINDERS, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "REM", USERFILES, USERREMINDERS, user->name);
     fp = fopen(filename, "r");
     if (!fp) {
         return 0;
@@ -6925,7 +6925,7 @@ write_user_reminders(UR_OBJECT user)
     int dd, mm, yy, alert = 0;
     int i, cnt;
 
-    sprintf(filename, "%s/%s/%s.REM", USERFILES, USERREMINDERS, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "REM", USERFILES, USERREMINDERS, user->name);
     fp = fopen(filename, "w");
     if (!fp) {
         write_syslog(SYSLOG | ERRLOG, 0,

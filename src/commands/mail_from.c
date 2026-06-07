@@ -23,7 +23,7 @@ mail_from(UR_OBJECT user)
     FILE *fp;
     int valid, cnt, tmp1, tmp2, nmail;
 
-    sprintf(filename, "%s/%s/%s.M", USERFILES, USERMAILS, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, user->name);
     fp = fopen(filename, "r");
     if (!fp) {
         write_user(user, "You have no mail.\n");

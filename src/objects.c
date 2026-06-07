@@ -854,7 +854,7 @@ load_flagged_users(UR_OBJECT user)
     int f;
     unsigned flags, errors;
 
-    sprintf(filename, "%s/%s/%s.U", USERFILES, USERFLAGGED, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "U", USERFILES, USERFLAGGED, user->name);
     fp = fopen(filename, "r");
     if (!fp) {
         return 1;
@@ -883,7 +883,7 @@ save_flagged_users(UR_OBJECT user)
     FILE *fp;
     FU_OBJECT fu;
 
-    sprintf(filename, "%s/%s/%s.U", USERFILES, USERFLAGGED, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "U", USERFILES, USERFLAGGED, user->name);
     if (!user->fu_first) {
         remove(filename);
         return 1;

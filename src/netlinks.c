@@ -1027,7 +1027,7 @@ nl_error(NL_OBJECT nl)
     if (*nl->mail_to) {
         sds filename;
         fclose(nl->mailfile);
-        filename = sdscatfmt(sdsempty(), "%s/IN_%s_%s@%s", MAILSPOOL, nl->mail_to, nl->mail_from, nl->service);
+        filename = sdscatfmt(sdsempty(), "%s" DIRSEP "IN_%s_%s@%s", MAILSPOOL, nl->mail_to, nl->mail_from, nl->service);
         remove(filename);
         sdsfree(filename);
         *nl->mail_to = '\0';
@@ -1075,7 +1075,7 @@ nl_user_notexist(NL_OBJECT nl, char *to, char *from)
                 to, nl->service);
         send_mail(NULL, from, text2, 0);
     }
-    filename = sdscatfmt(sdsempty(), "%s/OUT_%s_%s@%s", MAILSPOOL, from, to, nl->service);
+    filename = sdscatfmt(sdsempty(), "%s" DIRSEP "OUT_%s_%s@%s", MAILSPOOL, from, to, nl->service);
     remove(filename);
     sdsfree(filename);
 }
@@ -1091,7 +1091,7 @@ nl_user_exist(NL_OBJECT nl, char *to, char *from)
     FILE *fp;
     UR_OBJECT user;
 
-    filename = sdscatfmt(sdsempty(), "%s/OUT_%s_%s@%s", MAILSPOOL, from, to, nl->service);
+    filename = sdscatfmt(sdsempty(), "%s" DIRSEP "OUT_%s_%s@%s", MAILSPOOL, from, to, nl->service);
     fp = fopen(filename, "r");
     if (!fp) {
         user = get_user(from);
@@ -1129,7 +1129,7 @@ nl_mail(NL_OBJECT nl, char *to, char *from)
     sds filename;
 
     write_syslog(NETLOG, 1, "NETLINK: Mail received for %s from %s.\n", to, nl->service);
-    filename = sdscatfmt(sdsempty(), "%s/IN_%s_%s@%s", MAILSPOOL, to, from, nl->service);
+    filename = sdscatfmt(sdsempty(), "%s" DIRSEP "IN_%s_%s@%s", MAILSPOOL, to, from, nl->service);
     nl->mailfile = fopen(filename, "w");
     if (!nl->mailfile) {
         write_syslog(SYSLOG, 0,
@@ -1159,7 +1159,7 @@ nl_endmail(NL_OBJECT nl)
 
     fclose(nl->mailfile);
     nl->mailfile = NULL;
-    sprintf(mailfile, "%s/IN_%s_%s@%s", MAILSPOOL, nl->mail_to, nl->mail_from,
+    sprintf(mailfile, "%s" DIRSEP "IN_%s_%s@%s", MAILSPOOL, nl->mail_to, nl->mail_from,
             nl->service);
     /* Copy to users mail file to a tempfile */
     outfp = fopen("tempfile", "w");
@@ -1174,7 +1174,7 @@ nl_endmail(NL_OBJECT nl)
         return;
     }
     /* Copy old mail file to tempfile */
-    sprintf(infile, "%s/%s/%s.M", USERFILES, USERMAILS, nl->mail_to);
+    sprintf(infile, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, nl->mail_to);
     /* first get old file size if any new mail, and also new mail count */
     amount = mail_sizes(nl->mail_to, 1);
     if (!amount) {
@@ -1303,7 +1303,7 @@ shutdown_netlink(NL_OBJECT nl)
         sprintf(text, "%s %s %s\n", netcom[NLC_MAILERROR], nl->mail_to, nl->mail_from);
         write_sock(nl->socket, text);
         fclose(nl->mailfile);
-        sprintf(mailfile, "%s/IN_%s_%s@%s", MAILSPOOL, nl->mail_to, nl->mail_from,
+        sprintf(mailfile, "%s" DIRSEP "IN_%s_%s@%s", MAILSPOOL, nl->mail_to, nl->mail_from,
                 nl->service);
         remove(mailfile);
         *nl->mail_to = '\0';
@@ -1564,7 +1564,7 @@ mail_nl(UR_OBJECT user, char *to, const char *mesg)
         return -1;
     }
     /* Write out to spool file first */
-    sprintf(filename, "%s/OUT_%s_%s@%s", MAILSPOOL, user->name, to,
+    sprintf(filename, "%s" DIRSEP "OUT_%s_%s@%s", MAILSPOOL, user->name, to,
             nl->service);
     fp = fopen(filename, "a");
     if (!fp) {

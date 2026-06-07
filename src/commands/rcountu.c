@@ -99,7 +99,7 @@ recount_users(UR_OBJECT user, char *inpstr)
     write_user(user, "\nProcessing users to remove...");
     for (entry = first_user_entry; entry; entry = next) {
         next = entry->next;
-        sprintf(filename, "%s/%s.D", USERFILES, entry->name);
+        sprintf(filename, "%s" DIRSEP "%s" EXTSEP "D", USERFILES, entry->name);
         fp = fopen(filename, "r");
         if (!fp) {
             ++removed;

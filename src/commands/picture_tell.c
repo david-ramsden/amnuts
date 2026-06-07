@@ -85,7 +85,7 @@ picture_tell(UR_OBJECT user)
         write_user(user, "Sorry, there is no picture with that name.\n");
         return;
     }
-    filename = sdscatfmt(sdsempty(), "%s/%s", PICTFILES, word[2]);
+    filename = sdscatfmt(sdsempty(), "%s" DIRSEP "%s", PICTFILES, word[2]);
     fp = fopen(filename, "r");
     if (!fp) {
         write_user(user, "Sorry, there is no picture with that name.\n");

@@ -108,7 +108,7 @@ get_hang_word(char *aword)
 
     /* if no word is found, just return a generic word */
     strcpy(aword, "hangman");
-    sprintf(filename, "%s/%s", MISCFILES, HANGDICT);
+    sprintf(filename, "%s" DIRSEP "%s", MISCFILES, HANGDICT);
     cnt = count_lines(filename);
     if (!cnt) {
         return;

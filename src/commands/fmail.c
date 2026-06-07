@@ -40,7 +40,7 @@ forward_specific_mail(UR_OBJECT user)
     sprintf(subject, "Manual forwarding of smail (%s)", user->name);
     /* send all smail */
     if (!strcasecmp(word[1], "all")) {
-        sprintf(filenameo, "%s/%s.FWD", MAILSPOOL, user->name);
+        sprintf(filenameo, "%s" DIRSEP "%s" EXTSEP "FWD", MAILSPOOL, user->name);
         fpo = fopen(filenameo, "w");
         if (!fpo) {
             write_syslog(SYSLOG, 0,
@@ -48,7 +48,7 @@ forward_specific_mail(UR_OBJECT user)
             write_user(user, "Sorry, could not forward any mail to you.\n");
             return;
         }
-        sprintf(filenamei, "%s/%s/%s.M", USERFILES, USERMAILS, user->name);
+        sprintf(filenamei, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, user->name);
         fpi = fopen(filenamei, "r");
         if (!fpi) {
             write_user(user, "Sorry, could not forward any mail to you.\n");
@@ -84,7 +84,7 @@ forward_specific_mail(UR_OBJECT user)
                 PLTEXT_S(total));
         return;
     }
-    sprintf(filenameo, "%s/%s.FWD", MAILSPOOL, user->name);
+    sprintf(filenameo, "%s" DIRSEP "%s" EXTSEP "FWD", MAILSPOOL, user->name);
     fpo = fopen(filenameo, "w");
     if (!fpo) {
         write_syslog(SYSLOG, 0,
@@ -92,7 +92,7 @@ forward_specific_mail(UR_OBJECT user)
         write_user(user, "Sorry, could not forward any mail to you.\n");
         return;
     }
-    sprintf(filenamei, "%s/%s/%s.M", USERFILES, USERMAILS, user->name);
+    sprintf(filenamei, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, user->name);
     fpi = fopen(filenamei, "r");
     if (!fpi) {
         write_user(user, "Sorry, could not forward any mail to you.\n");

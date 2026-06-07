@@ -38,16 +38,16 @@ viewlog(UR_OBJECT user)
     strftime(dstr, 32, "%Y%m%d", localtime(&amsys->boot_time));
     if (word_count == 2) {
         if (!strcmp(word[1], "SYS")) {
-            sprintf(logfile, "%s/%s.%s", LOGFILES, MAINSYSLOG, dstr);
+            sprintf(logfile, "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, MAINSYSLOG, dstr);
             write_user(user, "\n~BB~FG*** System log ***\n\n");
         } else if (!strcmp(word[1], "NET")) {
-            sprintf(logfile, "%s/%s.%s", LOGFILES, NETSYSLOG, dstr);
+            sprintf(logfile, "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, NETSYSLOG, dstr);
             write_user(user, "\n~BB~FG*** Netlink log ***\n\n");
         } else if (!strcmp(word[1], "REQ")) {
-            sprintf(logfile, "%s/%s.%s", LOGFILES, REQSYSLOG, dstr);
+            sprintf(logfile, "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, REQSYSLOG, dstr);
             write_user(user, "\n~BB~FG*** Account Request log ***\n\n");
         } else if (!strcmp(word[1], "ERR")) {
-            sprintf(logfile, "%s/%s.%s", LOGFILES, ERRSYSLOG, dstr);
+            sprintf(logfile, "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, ERRSYSLOG, dstr);
             write_user(user, "\n~BB~FG*** Error log ***\n\n");
         } else if (lvl != NUM_LEVELS) {
             vwrite_user(user, "\n~BB~FG*** User list for level \"%s\" ***\n\n",
@@ -90,19 +90,19 @@ viewlog(UR_OBJECT user)
     type = 0;
     /* find out which log */
     if (!strcmp(word[1], "SYS")) {
-        sprintf(logfile, "%s/%s.%s", LOGFILES, MAINSYSLOG, dstr);
+        sprintf(logfile, "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, MAINSYSLOG, dstr);
         type = SYSLOG;
     }
     if (!strcmp(word[1], "NET")) {
-        sprintf(logfile, "%s/%s.%s", LOGFILES, NETSYSLOG, dstr);
+        sprintf(logfile, "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, NETSYSLOG, dstr);
         type = NETLOG;
     }
     if (!strcmp(word[1], "REQ")) {
-        sprintf(logfile, "%s/%s.%s", LOGFILES, REQSYSLOG, dstr);
+        sprintf(logfile, "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, REQSYSLOG, dstr);
         type = REQLOG;
     }
     if (!strcmp(word[1], "ERR")) {
-        sprintf(logfile, "%s/%s.%s", LOGFILES, ERRSYSLOG, dstr);
+        sprintf(logfile, "%s" DIRSEP "%s" EXTSEP "%s", LOGFILES, ERRSYSLOG, dstr);
         type = ERRLOG;
     }
     if (lvl != NUM_LEVELS) {

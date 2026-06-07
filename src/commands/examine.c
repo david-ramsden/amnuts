@@ -76,7 +76,7 @@ examine(UR_OBJECT user)
         }
         write_user(user,
                 "+----- ~OL~FCProfile~RS --------------------------------------------------------------+\n\n");
-        sprintf(filename, "%s/%s/%s.P", USERFILES, USERPROFILES, u->name);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "P", USERFILES, USERPROFILES, u->name);
         fp = fopen(filename, "r");
         if (!fp) {
             write_user(user, "User has not yet witten a profile.\n\n");
@@ -129,7 +129,7 @@ examine(UR_OBJECT user)
     }
     write_user(user,
             "+----- ~OL~FCProfile~RS --------------------------------------------------------------+\n\n");
-    sprintf(filename, "%s/%s/%s.P", USERFILES, USERPROFILES, u->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "P", USERFILES, USERPROFILES, u->name);
     fp = fopen(filename, "r");
     if (!fp) {
         write_user(user, "User has not yet written a profile.\n\n");

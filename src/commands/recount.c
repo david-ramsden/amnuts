@@ -62,9 +62,9 @@ check_messages(UR_OBJECT user, int chforce)
         tmp = rm->mesg_cnt;
         rm->mesg_cnt = 0;
         if (is_personal_room(rm)) {
-            sprintf(filename, "%s/%s/%s.B", USERFILES, USERROOMS, rm->owner);
+            sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, rm->owner);
         } else {
-            sprintf(filename, "%s/%s.B", DATAFILES, rm->name);
+            sprintf(filename, "%s" DIRSEP "%s" EXTSEP "B", DATAFILES, rm->name);
         }
         infp = fopen(filename, "r");
         if (!infp) {

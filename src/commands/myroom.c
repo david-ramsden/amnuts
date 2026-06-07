@@ -60,11 +60,11 @@ personal_room(UR_OBJECT user)
         /* destroy */
         destruct_room(rm);
         /* delete the files */
-        sprintf(filename, "%s/%s/%s.R", USERFILES, USERROOMS, user->name);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "R", USERFILES, USERROOMS, user->name);
         remove(filename);
-        sprintf(filename, "%s/%s/%s.B", USERFILES, USERROOMS, user->name);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, user->name);
         remove(filename);
-        sprintf(filename, "%s/%s/%s.K", USERFILES, USERROOMS, user->name);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "K", USERFILES, USERROOMS, user->name);
         remove(filename);
         write_syslog(SYSLOG, 1, "%s destructed their personal room.\n",
                 user->name);

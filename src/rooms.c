@@ -111,7 +111,7 @@ parse_user_rooms(void)
     struct dirent *dp;
     RM_OBJECT rm;
 
-    sprintf(dirname, "%s/%s", USERFILES, USERROOMS);
+    sprintf(dirname, "%s" DIRSEP "%s", USERFILES, USERROOMS);
     dirp = opendir(dirname);
     if (!dirp) {
         fprintf(stderr,
@@ -157,7 +157,7 @@ personal_room_store(const char *name, int store, RM_OBJECT rm)
         sprintf(rm->name, "(%s)", rm->owner);
         strtolower(rm->name);
         rm->link[0] = room_first;
-        sprintf(filename, "%s/%s/%s.R", USERFILES, USERROOMS, rm->owner);
+        sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "R", USERFILES, USERROOMS, rm->owner);
         fp = fopen(filename, "r");
         if (!fp) {
             /* if cannot open the file then just put in default attributes */
@@ -195,7 +195,7 @@ personal_room_store(const char *name, int store, RM_OBJECT rm)
         return 1;
     }
     /* save info */
-    sprintf(filename, "%s/%s/%s.R", USERFILES, USERROOMS, rm->owner);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "R", USERFILES, USERROOMS, rm->owner);
     fp = fopen(filename, "w");
     if (!fp) {
         return 0;

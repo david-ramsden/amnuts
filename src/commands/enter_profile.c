@@ -34,7 +34,7 @@ enter_profile(UR_OBJECT user, char *inpstr)
     } else {
         inpstr = user->malloc_start;
     }
-    sprintf(filename, "%s/%s/%s.P", USERFILES, USERPROFILES, user->name);
+    sprintf(filename, "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "P", USERFILES, USERPROFILES, user->name);
     fp = fopen(filename, "w");
     if (!fp) {
         vwrite_user(user, "%s: cannot save your profile.\n", syserror);
