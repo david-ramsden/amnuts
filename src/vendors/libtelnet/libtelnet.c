@@ -47,6 +47,18 @@
 # define INLINE
 #endif
 
+#ifdef __riscos
+/* Norcroft 5.18 has no C99 __func__; fall back to a generic string so
+ * the error reporting still compiles.  Keeps line numbers accurate. */
+# define __func__ "?"
+/* va_copy is C99; on Norcroft va_list is an array type, so emulate it via
+ * a byte-wise copy of the underlying storage. */
+# include <string.h>
+# ifndef va_copy
+#  define va_copy(dst, src) memcpy(&(dst), &(src), sizeof(va_list))
+# endif
+#endif
+
 /* helper for Q-method option tracking */
 #define Q_US(q) ((q).state & 0x0F)
 #define Q_HIM(q) (((q).state & 0xF0) >> 4)

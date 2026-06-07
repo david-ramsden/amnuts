@@ -11,7 +11,11 @@
 #ifndef AMNUTS_PROTOTYPES_H
 #define AMNUTS_PROTOTYPES_H
 
+#ifdef __riscos
+#include "sds.h"
+#else
 #include "../vendors/sds/sds.h"
+#endif
 
 #ifndef __attribute__
 #if !defined __GNUC__ || __GNUC__ < 2 || (__GNUC__ == 2 && __GNUC_MINOR__ < 7)

@@ -48,12 +48,18 @@ enum nlc_value {
 #define ML_EXPAND(value,name) NLC_ ## value,
     NLC_LIST
 #undef ML_EXPAND
+#ifdef __riscos
+    NLC_NORCROFT_END
+#endif
 };
 
 static const char *const netcom[] = {
 #define ML_EXPAND(value,name) name,
     NLC_LIST
 #undef ML_EXPAND
+#ifdef __riscos
+    NULL
+#endif
 };
 
 #endif

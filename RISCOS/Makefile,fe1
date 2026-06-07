@@ -1,0 +1,217 @@
+#!/usr/bin/env riscos-amu -f
+# Makefile for amnuts
+#
+
+#
+# Program specific options:
+#
+COMPONENT  = amnuts
+
+# Specifies additional targets for startup
+#INITTARGET = inittarget
+
+# Specifies additional targets for clean
+#CLEANTARGET = cleantarget
+
+# Files to export as part of export_hdr or export_libs
+# To export to the library in a subdirectory, use an export like:
+#   ${EXP_LIB}.${COMPONENT}.h.myheader
+EXPORTS    = ${EXP_LIB}.${COMPONENT}.o.libamnuts
+
+# Comma-separated list of paths to use for includes, such as:
+#	C:LibName.
+INCLUDES   = C:TCPIPLibs.
+
+# Space separated list of defines to set, eg -DDEBUG
+CDEFINES   = -DGAMES -DNETLINKS -DWIZPORT
+
+# Objects to build, using the format o.<name> (will be varied for build type)
+OBJS       = o.account \
+             o.accreq \
+             o.addhistory \
+             o.admin \
+             o.afk \
+             o.allclones \
+             o.arrest \
+             o.ban \
+             o.bcast \
+             o.beep \
+             o.bring \
+             o.cafk \
+             o.calendar \
+             o.cedit \
+             o.change_pass \
+             o.charecho \
+             o.clearline \
+             o.clone_emote \
+             o.clone_hear \
+             o.clone_say \
+             o.clone_switch \
+             o.cls \
+             o.cmdcount \
+             o.colour \
+             o.connect_netlink \
+             o.copyto \
+             o.create_clone \
+             o.cshouts \
+             o.ctells \
+             o.ctopic \
+             o.delete_suggestions \
+             o.delete_user \
+             o.demote \
+             o.destroy_clone \
+             o.disconnect_netlink \
+             o.display \
+             o.dmail \
+             o.dump \
+             o.echo \
+             o.emote \
+             o.enter_profile \
+             o.examine \
+             o.expires \
+             o.fix \
+             o.flagged \
+             o.fmail \
+             o.force \
+             o.friend_emote \
+             o.friend_say \
+             o.friends \
+             o.fsmail \
+             o.games \
+             o.gcom \
+             o.go \
+             o.greet \
+             o.grepusers \
+             o.help \
+             o.history \
+             o.home \
+             o.ignlist \
+             o.ignuser \
+             o.invite \
+             o.join \
+             o.kill_user \
+             o.last \
+             o.letmein \
+             o.listbans \
+             o.listen \
+             o.lmail \
+             o.logging \
+             o.look \
+             o.macros \
+             o.mail_from \
+             o.messages \
+             o.minlogin \
+             o.mkinvis \
+             o.mkvis \
+             o.morph \
+             o.move \
+             o.mutter \
+             o.muzzle \
+             o.myclones \
+             o.myroom \
+             o.myroom_admin \
+             o.myroom_bgone \
+             o.myroom_key \
+             o.myroom_lock \
+             o.myroom_paint \
+             o.myroom_rename \
+             o.netdata \
+             o.netlinks \
+             o.netstat \
+             o.objects \
+             o.pager \
+             o.pemote \
+             o.picture_all \
+             o.picture_tell \
+             o.plead \
+             o.preview \
+             o.promote \
+             o.promote_temporary \
+             o.purge \
+             o.quick_call \
+             o.ranks \
+             o.rcountu \
+             o.read_board \
+             o.reboot \
+             o.reboot_talker \
+             o.recount \
+             o.reload_room \
+             o.reminder \
+             o.remote_stat \
+             o.resite \
+             o.retire \
+             o.revafk \
+             o.revclr \
+             o.revedit \
+             o.review \
+             o.revshout \
+             o.revtell \
+             o.libtelnet \
+             o.riscos_crypt \
+             o.riscos_posix \
+             o.rmail \
+             o.room \
+             o.rooms \
+             o.samesite \
+             o.say \
+             o.sayto \
+             o.search_boards \
+             o.semote \
+             o.set \
+             o.set_desc \
+             o.set_ignore \
+             o.set_iophrase \
+             o.set_room_access \
+             o.set_topic \
+             o.setcmdlev \
+             o.sfrom \
+             o.shackle \
+             o.shout \
+             o.show \
+             o.show_version \
+             o.shutdown_com \
+             o.sing_it \
+             o.site \
+             o.smail \
+             o.speech \
+             o.spodlist \
+             o.sreboot \
+             o.status \
+             o.sto \
+             o.strings \
+             o.suggestions \
+             o.suicide \
+             o.system \
+             o.tell_user \
+             o.telnet \
+             o.terminal \
+             o.think_it \
+             o.time \
+             o.toggle_ignall \
+             o.toggle_mode \
+             o.toggle_prompt \
+             o.toggle_swearban \
+             o.unarrest \
+             o.unban \
+             o.uninvite \
+             o.unmuzzle \
+             o.unretire \
+             o.unshackle \
+             o.verify \
+             o.viewlog \
+             o.visibility \
+             o.visit \
+             o.wake \
+             o.who \
+             o.wipe_board \
+             o.wizemote \
+             o.wizlist \
+             o.wizshout \
+             o.write_board \
+             o.xcom \
+             o.sds \
+
+include LibExport
+
+#---------------------------------------------------------------------------
+# Dynamic dependencies:

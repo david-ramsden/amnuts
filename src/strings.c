@@ -595,6 +595,7 @@ align_string(int pos, int cstrlen, int mark, const char *marker, const char *str
     char text2[ARR_SIZE * 2];
     char vtext[ARR_SIZE];
     int len = 0, spc = 0, odd = 0;
+    int index;
 
     /* first build up the string */
     *vtext = '\0';
@@ -632,7 +633,7 @@ align_string(int pos, int cstrlen, int mark, const char *marker, const char *str
             marker = "|";
         }
         *vtext = *marker;
-        int index = 0;
+        index = 0;
         if (strlen(vtext) > 0) {
             index = strlen(vtext) - 1;
         }

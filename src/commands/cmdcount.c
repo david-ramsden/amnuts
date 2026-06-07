@@ -22,6 +22,9 @@ show_command_counts(UR_OBJECT user)
 {
     CMD_OBJECT cmd;
     int total_hits = 0, total_cmds = 0, cmds_used = 0, i, x = 0;
+    sds row;
+    sds entry;
+    char *summary;
 
     for (cmd = first_command; cmd; cmd = cmd->next) {
         total_hits += cmd->count;
@@ -36,14 +39,14 @@ show_command_counts(UR_OBJECT user)
     write_user(user,
         "+----------------------------------------------------------------------------+\n");
 
-    sds row = sdsempty();
+    row = sdsempty();
     for (cmd = first_command; cmd; cmd = cmd->next) {
         if (cmd->count == 0 || cmd->level > user->level) {
             continue;
         }
         ++cmds_used;
         i = (cmd->count * 10000) / total_hits;
-        sds entry = sdsempty();
+        entry = sdsempty();
         entry = sdscatprintf(entry, "%12.12s %4d %3d%%", cmd->name, cmd->count, i / 100);
 
         if (x == 0) {
@@ -79,7 +82,7 @@ show_command_counts(UR_OBJECT user)
     write_user(user,
         "+----------------------------------------------------------------------------+\n");
 
-    char *summary = sdscatprintf(sdsempty(),
+    summary = sdscatprintf(sdsempty(),
         "Total of ~OL%d~RS commands.    ~OL%d~RS command%s used a total of ~OL%d~RS time%s.",
         total_cmds, cmds_used, PLTEXT_S(cmds_used), total_hits, PLTEXT_S(total_hits));
     vwrite_user(user, "| %-92s |\n", summary);

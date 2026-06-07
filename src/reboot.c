@@ -460,6 +460,7 @@ do_sreboot(UR_OBJECT user)
      */
 
     close_fds();
+#ifndef __riscos
     /* XXX: Why does this need to fork()?; Find a better reboot proof mechanism */
     cpid = fork();
     switch (cpid) {
@@ -499,6 +500,15 @@ do_sreboot(UR_OBJECT user)
         }
         exit(0);
     }
+#else
+    /* RISC OS: no fork()/execvp(); seamless reboot via re-exec not supported. */
+    (void)cpid; (void)f; (void)args; (void)progname;
+    if (user) {
+        write_user(user, " Seamless reboot is not supported on RISC OS.\n");
+    }
+    write_syslog(SYSLOG | ERRLOG, 0,
+            "ERROR: Seamless reboot is not supported on RISC OS.\n");
+#endif /* !__riscos */
 }
 
 
@@ -800,8 +810,10 @@ possibly_reboot(void)
 #endif
 
     /* FIXME: Find a better way to do this; rm tries to remove CVS directory */
+#ifndef __riscos
     sprintf(text, "rm -f %s/*", REBOOTING_DIR);
     system(text);
+#endif /* !__riscos */
     time(&amsys->sreb_time);
     if (*rebooter) {
         u = get_user(rebooter);

@@ -11,29 +11,61 @@
 #ifndef AMNUTS_DEFINES_H
 #define AMNUTS_DEFINES_H
 
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/time.h>
-#include <sys/stat.h>
-#include <sys/utsname.h>
-#include <sys/select.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <signal.h>
-#include <time.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <dirent.h>
-#include <stddef.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-#include <strings.h>
+#ifdef __riscos
+/*
+ * RISC OS: use TCP/IP library headers (Internet module) and exclude
+ * UNIX-only headers that are not available under Norcroft C.
+ * IDENTD and MANDNS both require fork()/popen() so are disabled.
+ */
+# undef  IDENTD
+# undef  MANDNS
+# include "riscos_compat.h"
+# include <sys/types.h>
+# include <sys/time.h>
+# include <sys/stat.h>
+# include <sys/select.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <netdb.h>
+# include <unistd.h>
+# include <time.h>
+# include <errno.h>
+# include <dirent.h>
+# include <stddef.h>
+# include <stdarg.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <ctype.h>
+# include <string.h>
+/* RISC OS uses '.' as directory separator */
+# define DIRSEP "."
+#else
+# include <sys/types.h>
+# include <sys/wait.h>
+# include <sys/time.h>
+# include <sys/stat.h>
+# include <sys/utsname.h>
+# include <sys/select.h>
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <netdb.h>
+# include <unistd.h>
+# include <signal.h>
+# include <time.h>
+# include <errno.h>
+# include <fcntl.h>
+# include <dirent.h>
+# include <stddef.h>
+# include <stdarg.h>
+# include <stdlib.h>
+# include <stdio.h>
+# include <ctype.h>
+# include <string.h>
+# include <strings.h>
+# define DIRSEP "/"
+#endif
 
 
 /*
@@ -48,19 +80,19 @@
 
 /* general directories */
 #define BASE_STORAGE_DIR "files"
-#define ADMINFILES BASE_STORAGE_DIR "/adminfiles"
-#define DATAFILES  BASE_STORAGE_DIR "/datafiles"
-#define DUMPFILES  BASE_STORAGE_DIR "/dumpfiles"
-#define HELPFILES  BASE_STORAGE_DIR "/helpfiles"
-#define LOGFILES   BASE_STORAGE_DIR "/logfiles"
-#define MAILSPOOL  BASE_STORAGE_DIR "/mailspool"
-#define MISCFILES  BASE_STORAGE_DIR "/miscfiles"
-#define MOTDFILES  BASE_STORAGE_DIR "/motds"
-#define PICTFILES  BASE_STORAGE_DIR "/pictfiles"
-#define TEXTFILES  BASE_STORAGE_DIR "/textfiles"
+#define ADMINFILES BASE_STORAGE_DIR DIRSEP "adminfiles"
+#define DATAFILES  BASE_STORAGE_DIR DIRSEP "datafiles"
+#define DUMPFILES  BASE_STORAGE_DIR DIRSEP "dumpfiles"
+#define HELPFILES  BASE_STORAGE_DIR DIRSEP "helpfiles"
+#define LOGFILES   BASE_STORAGE_DIR DIRSEP "logfiles"
+#define MAILSPOOL  BASE_STORAGE_DIR DIRSEP "mailspool"
+#define MISCFILES  BASE_STORAGE_DIR DIRSEP "miscfiles"
+#define MOTDFILES  BASE_STORAGE_DIR DIRSEP "motds"
+#define PICTFILES  BASE_STORAGE_DIR DIRSEP "pictfiles"
+#define TEXTFILES  BASE_STORAGE_DIR DIRSEP "textfiles"
 
 /* user directories */
-#define USERFILES     BASE_STORAGE_DIR "/userfiles"
+#define USERFILES     BASE_STORAGE_DIR DIRSEP "userfiles"
 #define USERMAILS     "mail"
 #define USERPROFILES  "profiles"
 #define USERHISTORYS  "historys"
@@ -71,12 +103,12 @@
 #define USERFLAGGED   "flagged"
 
 /* seamless reboot */
-#define REBOOTING_DIR           BASE_STORAGE_DIR "/reboot"
-#define USER_LIST_FILE          REBOOTING_DIR "/_ulist"
-#define TALKER_SYSINFO_FILE     REBOOTING_DIR "/_sysinfo"
-#define CHILDS_PID_FILE         REBOOTING_DIR "/_child_pid"
-#define ROOM_LIST_FILE          REBOOTING_DIR "/_rlist"
-#define LAST_USERS_FILE         REBOOTING_DIR "/_last"
+#define REBOOTING_DIR           BASE_STORAGE_DIR DIRSEP "reboot"
+#define USER_LIST_FILE          REBOOTING_DIR DIRSEP "_ulist"
+#define TALKER_SYSINFO_FILE     REBOOTING_DIR DIRSEP "_sysinfo"
+#define CHILDS_PID_FILE         REBOOTING_DIR DIRSEP "_child_pid"
+#define ROOM_LIST_FILE          REBOOTING_DIR DIRSEP "_rlist"
+#define LAST_USERS_FILE         REBOOTING_DIR DIRSEP "_last"
 
 /* files */
 #define CONFIGFILE   "config"
@@ -207,8 +239,15 @@
 #endif
 
 /* macros for some variable length functions */
+#ifdef __riscos
+/* Norcroft does not support C99 variadic macros.  All call sites in this
+ * codebase use the 2-argument forms only (matching the historic
+ * write_sock(int, const char *) and write_telnet(telnet_t *, const char *)
+ * signatures), so the dispatcher is unnecessary on RISC OS. */
+#else
 #define write_sock(...) write_sock_dispatch(__VA_ARGS__, write_sock_with_size_and_flags, write_sock_with_size, write_sock)(__VA_ARGS__)
 #define write_sock_dispatch(_1, _2, _3, _4, NAME, ...) NAME
 
 #define write_telnet(...) write_telnet_dispatch(__VA_ARGS__, write_telnet_with_size, write_telnet)(__VA_ARGS__)
 #define write_telnet_dispatch(_1, _2, _3, NAME, ...) NAME
+#endif

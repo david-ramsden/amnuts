@@ -87,11 +87,16 @@ talker_shutdown(UR_OBJECT user, const char *str, int sdboot)
          * and technically not all null pointers are are physically
          * represented the same way.
          */
+#ifndef __riscos
         execvp(progname, args);
         /* If we get this far it has not worked */
         write_syslog(SYSLOG, 0, "*** REBOOT FAILED %s: %s ***\n\n", long_date(1),
                 strerror(errno));
         exit(12);
+#else
+        write_syslog(SYSLOG, 0, "*** REBOOT not supported on RISC OS %s ***\n\n", long_date(1));
+        exit(12);
+#endif /* !__riscos */
     }
     write_syslog(SYSLOG, 0, "*** SHUTDOWN complete %s ***\n\n", long_date(1));
     exit(0);

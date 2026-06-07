@@ -141,6 +141,7 @@ main(int argc, char **argv)
     }
 
     /* Run in background automatically unless we're running in a docker container */
+#ifndef __riscos
     char* run_in_foreground = getenv("IN_FOREGROUND");
     if (run_in_foreground == NULL) {
         switch (fork()) {
@@ -159,6 +160,9 @@ main(int argc, char **argv)
         printf("Running in foreground...");
     }
     /* XXX: Add setsid() and redirect stdio to /dev/null somewhere */
+#else
+    printf("Running in foreground (RISC OS)...");
+#endif /* !__riscos */
 
 #ifdef NETLINKS
     if (amsys->auto_connect) {
@@ -211,12 +215,25 @@ main(int argc, char **argv)
         }
         /* set up mask then wait */
         len = 1 + setup_readmask(&readmask);
+#ifdef __riscos
+        /* On RISC OS, use a non-blocking poll then yield to the
+         * cooperative scheduler via OS_Byte 19 (wait-for-vsync).
+         * This prevents the talker from monopolising the CPU. */
+        timeout.tv_sec = 0;
+        timeout.tv_usec = 0;
+        len = select(len, &readmask, NULL, NULL, &timeout);
+        if (len < 1) {
+            riscos_yield();
+            continue;
+        }
+#else
         timeout.tv_sec = amsys->heartbeat;
         timeout.tv_usec = 0;
         len = select(len, &readmask, NULL, NULL, &timeout);
         if (len < 1) {
             continue;
         }
+#endif /* __riscos */
         /* check for connection to listen sockets */
         if (FD_ISSET(amsys->mport_socket, &readmask)) {
             accept_connection(amsys->mport_socket);
@@ -974,6 +991,7 @@ socket_listen(const char *host, const char *serv)
         return -8;
     }
     /* Set to non-blocking */
+#ifndef __riscos
     rc = 0;
     rc = fcntl(s, F_GETFL, rc);
 #if 0
@@ -988,6 +1006,7 @@ socket_listen(const char *host, const char *serv)
         /* Do Something */;
     }
 #endif
+#endif /* !__riscos */
     return s;
 }
 
@@ -1014,11 +1033,17 @@ load_and_parse_config(void)
 #define ML_EXPAND(value,name) CONFIG_ ## value,
         CONFIG_LIST
 #undef ML_EXPAND
+#ifdef __riscos
+        CONFIG_NORCROFT_END
+#endif
     };
     static const char *const sections[] = {
 #define ML_EXPAND(value,name) name,
         CONFIG_LIST
 #undef ML_EXPAND
+#ifdef __riscos
+        NULL
+#endif
     };
     FILE *fp;
     char line[81]; /* Should be long enough */
@@ -1307,11 +1332,17 @@ parse_init_section(void)
 #define ML_EXPAND(value,name) INITOPT_ ## value,
         INITOPT_LIST
 #undef ML_EXPAND
+#ifdef __riscos
+        INITOPT_NORCROFT_END
+#endif
     };
     static const char *const options[] = {
 #define ML_EXPAND(value,name) name,
         INITOPT_LIST
 #undef ML_EXPAND
+#ifdef __riscos
+        NULL
+#endif
     };
     int val;
     const char *const *initopt;
@@ -2079,12 +2110,32 @@ parse_sites_section(void)
  Signal handlers and exit functions
  *****************************************************************************/
 
+#ifdef __riscos
+/* Called via atexit() on RISC OS.  On RISC OS, Escape in a TaskWindow causes
+   the Norcroft runtime to call exit() directly, bypassing signal delivery.
+   If users are still connected (talker_shutdown() has not already run), notify
+   and disconnect them before closing the listening sockets. */
+static void
+riscos_socket_cleanup(void)
+{
+    static int done = 0;
+    if (done || !amsys) return;
+    done = 1;
+    if (user_first) {
+        write_room(NULL, "\007\n~OLSYSTEM:~FR~LI Shutting down now!!\n\n");
+        write_syslog(SYSLOG, 0, "*** SHUTDOWN (process exit) %s ***\n\n", long_date(1));
+    }
+    talker_shutdown(NULL, "process exit", 0);
+}
+#endif /* __riscos */
+
 /*
  * Initialise the signal traps, etc.
  */
 void
 init_signals(void)
 {
+#ifndef __riscos
     /*
      * NOTE: Neither of these should be needed but...
      * sysv_signal() => SA_RESETHAND (which in turn => SA_NODEFER)
@@ -2109,6 +2160,10 @@ init_signals(void)
     sigaction(SIGFPE, &sa, NULL);
     sigaction(SIGSEGV, &sa, NULL);
     sigaction(SIGBUS, &sa, NULL);
+#endif
+#endif /* !__riscos */
+#ifdef __riscos
+    atexit(riscos_socket_cleanup);
 #endif
 }
 
@@ -2583,11 +2638,17 @@ enum userdb_value {
 #define ML_EXPAND(value,name) USERDB_ ## value,
     USERDB_LIST
 #undef ML_EXPAND
+#ifdef __riscos
+    USERDB_NORCROFT_END
+#endif
 };
 static const char *const userfile_options[] = {
 #define ML_EXPAND(value,name) name,
     USERDB_LIST
 #undef ML_EXPAND
+#ifdef __riscos
+    NULL
+#endif
 };
 
 /*
@@ -3631,9 +3692,9 @@ write_user(UR_OBJECT user, const char *str)
          * 6 chars is max a single char can expand into */
         if (buffpos > OUT_BUFF_SIZE - 6) {
             if (user->telnet) {
-                write_telnet(user->telnet, buff, buffpos);
+                write_telnet_with_size(user->telnet, buff, buffpos);
             } else {
-                write_sock(user->socket, buff, buffpos);
+                write_sock_with_size(user->socket, buff, buffpos);
             }
             buffpos = 0;
         }
@@ -3684,9 +3745,9 @@ write_user(UR_OBJECT user, const char *str)
     }
     if (buffpos) {
         if (user->telnet) {
-            write_telnet(user->telnet, buff, buffpos);
+            write_telnet_with_size(user->telnet, buff, buffpos);
         } else {
-            write_sock(user->socket, buff, buffpos, 0);
+            write_sock_with_size_and_flags(user->socket, buff, buffpos, 0);
         }
     }
     /* Reset terminal at end of string */
@@ -4208,9 +4269,9 @@ more(UR_OBJECT user, int sock, const char *filename)
         for (s = str; *s; ++s) {
             if (buffpos > OUT_BUFF_SIZE - (6 < USER_NAME_LEN ? USER_NAME_LEN : 6)) {
                 if (user && user->telnet) {
-                    write_telnet(user->telnet, buff, buffpos);
+                    write_telnet_with_size(user->telnet, buff, buffpos);
                 } else {
-                    write_sock(sock, buff, buffpos, 0);
+                    write_sock_with_size_and_flags(sock, buff, buffpos, 0);
                 }
                 buffpos = 0;
             }
@@ -4276,9 +4337,9 @@ more(UR_OBJECT user, int sock, const char *filename)
     }
     if (buffpos && sock != -1) {
         if (user && user->telnet) {
-            write_telnet(user->telnet, buff, buffpos);
+            write_telnet_with_size(user->telnet, buff, buffpos);
         } else {
-            write_sock(sock, buff, buffpos, 0);
+            write_sock_with_size_and_flags(sock, buff, buffpos, 0);
         }
     }
     /* if user is logging on dont page file */

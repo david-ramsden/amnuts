@@ -38,7 +38,38 @@ extern const char *SDS_NOINIT;
 
 #include <sys/types.h>
 #include <stdarg.h>
-#include <stdint.h>
+#include <limits.h>
+#ifdef __riscos
+/* On RISC OS, sys/types.h (TCPIPLibs) already provides uint8_t/16_t/32_t
+ * and ssize_t.  Norcroft 5.18 does not have long long, so the sdshdr64
+ * struct is never instantiated at runtime (32-bit RISC OS clamps the
+ * required type to SDS_TYPE_32 in sdsReqType).  Aliasing uint64_t to
+ * uint32_t lets the struct definition and switch cases compile. */
+# include "riscos_compat.h"
+# define uint64_t uint32_t
+/* Do not define LLONG_MAX/LLONG_MIN: leaving them undefined makes the
+ * (LONG_MAX == LLONG_MAX) guard in sds.c evaluate false, so the SDS_TYPE_32
+ * branch is taken and no long long arithmetic is emitted. */
+/* Norcroft does not support GNU __attribute__ packing.  Structures are
+ * already packed because the compiler is invoked with -zps1, so define
+ * it away here. */
+# ifndef __attribute__
+#  define __attribute__(x)
+# endif
+/* Norcroft's "inline" keyword is "__inline" (extension). */
+# define inline __inline
+/* va_copy is C99; on Norcroft va_list is an array type (single-pass ABI),
+ * so a byte-wise copy of the underlying storage is the closest equivalent. */
+# ifndef va_copy
+#  define va_copy(dst, src) memcpy(&(dst), &(src), sizeof(va_list))
+# endif
+/* Norcroft has no C99 flexible array members; use a 1-byte stub so the
+ * struct accepts dynamic trailing data via pointer arithmetic. */
+# define SDS_BUF_FAM 1
+#else
+# include <stdint.h>
+# define SDS_BUF_FAM /* empty: C99 flexible array */
+#endif
 
 typedef char *sds;
 
@@ -46,31 +77,31 @@ typedef char *sds;
  * However is here to document the layout of type 5 SDS strings. */
 struct __attribute__ ((__packed__)) sdshdr5 {
     unsigned char flags; /* 3 lsb of type, and 5 msb of string length */
-    char buf[];
+    char buf[SDS_BUF_FAM];
 };
 struct __attribute__ ((__packed__)) sdshdr8 {
     uint8_t len; /* used */
     uint8_t alloc; /* excluding the header and null terminator */
     unsigned char flags; /* 3 lsb of type, 5 unused bits */
-    char buf[];
+    char buf[SDS_BUF_FAM];
 };
 struct __attribute__ ((__packed__)) sdshdr16 {
     uint16_t len; /* used */
     uint16_t alloc; /* excluding the header and null terminator */
     unsigned char flags; /* 3 lsb of type, 5 unused bits */
-    char buf[];
+    char buf[SDS_BUF_FAM];
 };
 struct __attribute__ ((__packed__)) sdshdr32 {
     uint32_t len; /* used */
     uint32_t alloc; /* excluding the header and null terminator */
     unsigned char flags; /* 3 lsb of type, 5 unused bits */
-    char buf[];
+    char buf[SDS_BUF_FAM];
 };
 struct __attribute__ ((__packed__)) sdshdr64 {
     uint64_t len; /* used */
     uint64_t alloc; /* excluding the header and null terminator */
     unsigned char flags; /* 3 lsb of type, 5 unused bits */
-    char buf[];
+    char buf[SDS_BUF_FAM];
 };
 
 #define SDS_TYPE_5  0
@@ -245,7 +276,25 @@ sds *sdssplitlen(const char *s, ssize_t len, const char *sep, int seplen, int *c
 void sdsfreesplitres(sds *tokens, int count);
 void sdstolower(sds s);
 void sdstoupper(sds s);
-sds sdsfromlonglong(long long value);
+/* Norcroft 5.18 has no 'long long' type and no LLONG_MAX/LLONG_MIN.  Alias
+ * the long-long-flavoured types and macros to plain 'long' on RISC OS so the
+ * vendor source compiles unchanged; sds is only used by amnuts for string
+ * formatting and ID-sized numbers, well within long. */
+#ifdef __riscos
+typedef long          sds_llong;
+typedef unsigned long sds_ullong;
+# ifndef SDS_LLONG_MAX
+#  define SDS_LLONG_MAX LONG_MAX
+#  define SDS_LLONG_MIN LONG_MIN
+# endif
+#else
+typedef long long          sds_llong;
+typedef unsigned long long sds_ullong;
+# define SDS_LLONG_MAX LLONG_MAX
+# define SDS_LLONG_MIN LLONG_MIN
+#endif
+
+sds sdsfromlonglong(sds_llong value);
 sds sdscatrepr(sds s, const char *p, size_t len);
 sds *sdssplitargs(const char *line, int *argc);
 sds sdsmapchars(sds s, const char *from, const char *to, size_t setlen);

@@ -1,0 +1,21 @@
+%YAML 1.0
+---
+
+# RISC OS build file to execute on https://build.riscos.online/
+
+jobs:
+  build:
+    env:
+      "Sys$Environment": ROBuild
+
+      # Faster building using the host toolchain
+      "Alias$AMU": "HostAMU %*0"
+
+    script:
+      - amu export
+      - amu -f MakefileAmnuts BUILD32=1
+      - cdir Artifacts
+      - copy aif32.amnuts Artifacts.amnuts ~CVF
+
+    artifacts:
+      - path: Artifacts

@@ -650,6 +650,12 @@ forward_email(char *name, char *from, char *message)
 int
 send_forward_email(char *send_to, char *mail_file, char *subject)
 {
+#ifdef __riscos
+    /* RISC OS: no system() / fork() available; just discard the mail. */
+    (void)send_to; (void)subject;
+    remove(mail_file);
+    return -1;
+#else
 #ifdef DOUBLEFORK
     switch (double_fork()) {
     case -1:
@@ -676,10 +682,11 @@ send_forward_email(char *send_to, char *mail_file, char *subject)
     remove(mail_file);
 #endif
     return 1;
+#endif /* __riscos */
 }
 
 
-#ifdef DOUBLEFORK
+#if defined(DOUBLEFORK) && !defined(__riscos)
 
 /*
  * signal trapping not working, so fork twice

@@ -89,12 +89,15 @@ static inline char sdsReqType(size_t string_size) {
 sds sdsnewlen(const void *init, size_t initlen) {
     void *sh;
     sds s;
-    char type = sdsReqType(initlen);
+    char type;
+    int hdrlen;
+    unsigned char *fp; /* flags pointer. */
+
+    type = sdsReqType(initlen);
     /* Empty strings are usually created in order to append. Use type 8
      * since type 5 is not good at this. */
     if (type == SDS_TYPE_5 && initlen == 0) type = SDS_TYPE_8;
-    int hdrlen = sdsHdrSize(type);
-    unsigned char *fp; /* flags pointer. */
+    hdrlen = sdsHdrSize(type);
 
     sh = s_malloc(hdrlen+initlen+1);
     if (sh == NULL) return NULL;
@@ -448,20 +451,20 @@ sds sdscpy(sds s, const char *t) {
  * The function returns the length of the null-terminated string
  * representation stored at 's'. */
 #define SDS_LLSTR_SIZE 21
-int sdsll2str(char *s, long long value) {
+int sdsll2str(char *s, sds_llong value) {
     char *p, aux;
-    unsigned long long v;
+    sds_ullong v;
     size_t l;
 
     /* Generate the string representation, this method produces
      * an reversed string. */
     if (value < 0) {
-        /* Since v is unsigned, if value==LLONG_MIN then
-         * -LLONG_MIN will overflow. */
-        if (value != LLONG_MIN) {
+        /* Since v is unsigned, if value==SDS_LLONG_MIN then
+         * -SDS_LLONG_MIN will overflow. */
+        if (value != SDS_LLONG_MIN) {
             v = -value;
         } else {
-            v = ((unsigned long long)LLONG_MAX) + 1;
+            v = ((sds_ullong)SDS_LLONG_MAX) + 1;
         }
     } else {
         v = value;
@@ -491,7 +494,7 @@ int sdsll2str(char *s, long long value) {
 }
 
 /* Identical sdsll2str(), but for unsigned long long type. */
-int sdsull2str(char *s, unsigned long long v) {
+int sdsull2str(char *s, sds_ullong v) {
     char *p, aux;
     size_t l;
 
@@ -523,7 +526,7 @@ int sdsull2str(char *s, unsigned long long v) {
  *
  * sdscatprintf(sdsempty(),"%lld\n", value);
  */
-sds sdsfromlonglong(long long value) {
+sds sdsfromlonglong(sds_llong value) {
     char buf[SDS_LLSTR_SIZE];
     int len = sdsll2str(buf,value);
 
@@ -629,8 +632,8 @@ sds sdscatfmt(sds s, char const *fmt, ...) {
     while(*f) {
         char next, *str;
         size_t l;
-        long long num;
-        unsigned long long unum;
+        sds_llong num;
+        sds_ullong unum;
 
         /* Make sure there is always space for at least 1 char. */
         if (sdsavail(s)==0) {
@@ -659,7 +662,7 @@ sds sdscatfmt(sds s, char const *fmt, ...) {
                 if (next == 'i')
                     num = va_arg(ap,int);
                 else
-                    num = va_arg(ap,long long);
+                    num = va_arg(ap,sds_llong);
                 {
                     char buf[SDS_LLSTR_SIZE];
                     l = sdsll2str(buf,num);
@@ -676,7 +679,7 @@ sds sdscatfmt(sds s, char const *fmt, ...) {
                 if (next == 'u')
                     unum = va_arg(ap,unsigned int);
                 else
-                    unum = va_arg(ap,unsigned long long);
+                    unum = va_arg(ap,sds_ullong);
                 {
                     char buf[SDS_LLSTR_SIZE];
                     l = sdsull2str(buf,unum);

@@ -11,7 +11,11 @@
 #ifndef AMNUTS_GLOBALS_H
 #define AMNUTS_GLOBALS_H
 
+#ifdef __riscos
+#include "libtelnet.h"
+#else
 #include "../vendors/libtelnet/libtelnet.h"
+#endif
 
 #define ML_ENTRY(a) ML_EXPAND a
 
@@ -48,6 +52,9 @@ enum lvl_value {
 #define ML_EXPAND(value,name,alias) value,
     LVL_LIST
 #undef ML_EXPAND
+#ifdef __riscos
+    LVL_NORCROFT_END
+#endif
 };
 
 enum swear_ban {

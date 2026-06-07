@@ -11,7 +11,11 @@
 #ifndef AMNUTS_TELNET_H
 #define AMNUTS_TELNET_H
 
+#ifdef __riscos
+#include "libtelnet.h"
+#else
 #include "../vendors/libtelnet/libtelnet.h"
+#endif
 
 extern const telnet_telopt_t telopts[];
 

@@ -1,0 +1,5 @@
+| !Run for Amnuts (RISC OS version %version%)
+
+Set Amnuts$Dir <Obey$Dir>
+Dir <Amnuts$Dir>
+TaskWindow <Amnuts$Dir>.amnuts

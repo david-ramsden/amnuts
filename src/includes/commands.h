@@ -280,22 +280,34 @@
 #endif
 
 /* XXX: Maybe find a better solution than enums? Pointers are unique */
+/* On RISC OS, Norcroft 5.18 rejects trailing commas in enum declarations.
+ * The CT_LIST/CMD_LIST/SET_LIST X-macros all produce a trailing ',', so
+ * append a sentinel entry that consumes it. */
 enum ct_value {
 #define ML_EXPAND(value,name) CT_ ## value,
     CT_LIST
 #undef ML_EXPAND
+#ifdef __riscos
+    CT_NORCROFT_END
+#endif
 };
 
 enum cmd_value {
 #define ML_EXPAND(value,name,alias,level,type) value,
     CMD_LIST
 #undef ML_EXPAND
+#ifdef __riscos
+    CMD_NORCROFT_END
+#endif
 };
 
 enum set_value {
 #define ML_EXPAND(value,name,desc) SET ## value,
     SET_LIST
 #undef ML_EXPAND
+#ifdef __riscos
+    SET_NORCROFT_END
+#endif
 };
 
 struct cmd_entry {

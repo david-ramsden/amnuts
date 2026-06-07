@@ -19,6 +19,8 @@
 void
 show_terminal(UR_OBJECT user)
 {
+    int pager;
+
     write_user(user, "+----------------------------------------------------------------------------+\n");
     write_user(user, "~FG Terminal Information~RS\n");
     write_user(user, "+----------------------------------------------------------------------------+\n\n");
@@ -33,7 +35,7 @@ show_terminal(UR_OBJECT user)
     } else {
         write_user(user, "Terminal type : unknown\n");
     }
-    int pager = effective_pager(user);
+    pager = effective_pager(user);
     if (user->pager >= MAX_LINES && user->pager <= 999) {
         vwrite_user(user, "Pager lines   : %d (manually set)\n", pager);
     } else {
