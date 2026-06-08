@@ -181,13 +181,15 @@ extern int fileno(FILE *fp);
 
 /* ---- strcasecmp / strncasecmp ------------------------------------ */
 /*
- * The Norcroft C library does not provide strcasecmp/strncasecmp.
+ * Provided by the StubsG (CLIBTYPE=generic) C library; no shim needed.
+ * <strings.h> is not present under Norcroft, so declare them here.
  */
 extern int strcasecmp(const char *s1, const char *s2);
 extern int strncasecmp(const char *s1, const char *s2, size_t n);
 
 /* ---- strdup ----------------------------------------------------- */
-/* Norcroft does not provide strdup; supplied by riscos_posix.c. */
+/* StubsG (C99) does not provide strdup (POSIX/C23); supplied by
+ * riscos_posix.c. */
 extern char *strdup(const char *s);
 
 #endif /* __riscos */

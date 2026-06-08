@@ -188,27 +188,9 @@ void riscos_yield(void)
     _swix(OS_Byte, _INR(0,2), 19, 0, 0);
 }
 
-/* ---- strcasecmp / strncasecmp -------------------------------------------- */
-int strcasecmp(const char *s1, const char *s2)
-{
-    while (*s1 && *s2) {
-        int d = tolower((unsigned char)*s1) - tolower((unsigned char)*s2);
-        if (d != 0) return d;
-        ++s1; ++s2;
-    }
-    return tolower((unsigned char)*s1) - tolower((unsigned char)*s2);
-}
-
-int strncasecmp(const char *s1, const char *s2, size_t n)
-{
-    while (n && *s1 && *s2) {
-        int d = tolower((unsigned char)*s1) - tolower((unsigned char)*s2);
-        if (d != 0) return d;
-        ++s1; ++s2; --n;
-    }
-    if (!n) return 0;
-    return tolower((unsigned char)*s1) - tolower((unsigned char)*s2);
-}
+/* ---- strcasecmp / strncasecmp ----------------------------------------------
+ * Provided by the StubsG (CLIBTYPE=generic) C library, so not implemented here.
+ * ------------------------------------------------------------------------- */
 
 /* ---- strdup -------------------------------------------------------------- */
 char *strdup(const char *s)
