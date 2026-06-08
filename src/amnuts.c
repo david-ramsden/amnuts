@@ -6288,6 +6288,7 @@ login_who(UR_OBJECT user)
         if (!(++on % 4)) {
             lineText = sdscat(lineText, "\n");
             write_user(user, lineText);
+            sdsfree(lineText);
             lineText = sdsempty();
         }
     }

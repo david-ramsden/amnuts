@@ -48,6 +48,7 @@ look(UR_OBJECT user)
             temp = sdscatfmt(sdsempty(), "  ~FG%s", rm->link[i]->name);
         }
         text = sdscat(text, temp);
+        sdsfree(temp);
         ++exits;
     }
 #ifdef NETLINKS
@@ -58,6 +59,7 @@ look(UR_OBJECT user)
             temp = sdscatfmt(sdsempty(), "  ~FG%s*", rm->netlink->service);
         }
         text = sdscat(text, temp);
+        sdsfree(temp);
     } else
 #endif
         if (!exits) {

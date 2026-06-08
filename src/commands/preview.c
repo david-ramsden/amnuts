@@ -55,16 +55,21 @@ preview(UR_OBJECT user)
             }
             text = sdscatprintf(text, "%-12.12s   ", dp->d_name);
             if (++cnt == 5) {
-                text = sdscatfmt(sdsempty(), "%s\n", align_string(ALIGN_LEFT, 78, 1, "|", "  %s", text));
-                write_user(user, text);
-                text = sdsempty();
+                sds line = sdscatfmt(sdsempty(), "%s\n",
+                        align_string(ALIGN_LEFT, 78, 1, "|", "  %s", text));
+                write_user(user, line);
+                sdsfree(line);
+                sdsclear(text);
                 cnt = 0;
             }
         }
         closedir(dirp);
         if (total) {
             if (cnt) {
-                text = sdscatfmt(sdsempty(), "%s\n", align_string(ALIGN_LEFT, 78, 1, "|", "  %s", text));
+                sds line = sdscatfmt(sdsempty(), "%s\n",
+                        align_string(ALIGN_LEFT, 78, 1, "|", "  %s", text));
+                write_user(user, line);
+                sdsfree(line);
             }
             write_user(user,
                     "+----------------------------------------------------------------------------+\n");

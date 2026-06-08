@@ -593,7 +593,12 @@ align_string(int pos, int cstrlen, int mark, const char *marker, const char *str
 {
     va_list args;
     char text2[ARR_SIZE * 2];
-    char vtext[ARR_SIZE];
+    /* Returned to the caller, who must not free it, and copied out before the
+     * next call.  Static (not strdup) so the 20-plus call sites that pass the
+     * result straight to write_user() do not each leak a buffer - this matches
+     * the original NUTS behaviour of returning the global vtext buffer.  Sized
+     * to hold text2 so the strcpy() below cannot overflow. */
+    static char vtext[ARR_SIZE * 2];
     int len = 0, spc = 0, odd = 0;
     int index;
 
@@ -608,7 +613,7 @@ align_string(int pos, int cstrlen, int mark, const char *marker, const char *str
     odd = ((spc + spc + len) - (cstrlen));
     /* if greater than size given then do not do anything except return */
     if (len > cstrlen) {
-        return strdup(vtext);
+        return vtext;
     }
     switch (pos) {
         case ALIGN_LEFT:
@@ -626,7 +631,7 @@ align_string(int pos, int cstrlen, int mark, const char *marker, const char *str
     if (mark) {
         /* if markers cannot be placed without over-writing text then return */
         if (len > (cstrlen - 2)) {
-            return strdup(vtext);
+            return vtext;
         }
         /* if they forgot to pass a marker, use a default one */
         if (!marker) {
@@ -640,7 +645,7 @@ align_string(int pos, int cstrlen, int mark, const char *marker, const char *str
         vtext[index] = *marker;
     }
     strcat(vtext, "\n");
-    return strdup(vtext);
+    return vtext;
 }
 
 /*

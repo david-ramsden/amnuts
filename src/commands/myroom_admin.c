@@ -137,6 +137,7 @@ personal_room_admin(UR_OBJECT user)
         if (!strcmp(word[1], "-d")) {
             filename = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "R", USERFILES, USERROOMS, word[2]);
             remove(filename);
+            sdsfree(filename);
             filename = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, word[2]);
             remove(filename);
             sdsfree(filename);

@@ -143,36 +143,58 @@ change_user_name(UR_OBJECT user)
     oldfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" EXTSEP "D", USERFILES, oldname);
     newfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" EXTSEP "D", USERFILES, newname);
     rename(oldfile, newfile);
+    sdsfree(oldfile);
+    sdsfree(newfile);
     oldfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, oldname);
     newfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "M", USERFILES, USERMAILS, newname);
     rename(oldfile, newfile);
+    sdsfree(oldfile);
+    sdsfree(newfile);
     oldfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "P", USERFILES, USERPROFILES, oldname);
     newfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "P", USERFILES, USERPROFILES, newname);
     rename(oldfile, newfile);
+    sdsfree(oldfile);
+    sdsfree(newfile);
     oldfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "H", USERFILES, USERHISTORYS, oldname);
     newfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "H", USERFILES, USERHISTORYS, newname);
     rename(oldfile, newfile);
+    sdsfree(oldfile);
+    sdsfree(newfile);
     oldfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "C", USERFILES, USERCOMMANDS, oldname);
     newfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "C", USERFILES, USERCOMMANDS, newname);
     rename(oldfile, newfile);
+    sdsfree(oldfile);
+    sdsfree(newfile);
     oldfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "MAC", USERFILES, USERMACROS, oldname);
     newfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "MAC", USERFILES, USERMACROS, newname);
     rename(oldfile, newfile);
+    sdsfree(oldfile);
+    sdsfree(newfile);
     oldfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "R", USERFILES, USERROOMS, oldname);
     newfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "R", USERFILES, USERROOMS, newname);
     rename(oldfile, newfile);
+    sdsfree(oldfile);
+    sdsfree(newfile);
     oldfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, oldname);
     newfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "B", USERFILES, USERROOMS, newname);
     rename(oldfile, newfile);
+    sdsfree(oldfile);
+    sdsfree(newfile);
     oldfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "K", USERFILES, USERROOMS, oldname);
     newfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "K", USERFILES, USERROOMS, newname);
     rename(oldfile, newfile);
+    sdsfree(oldfile);
+    sdsfree(newfile);
     oldfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "REM", USERFILES, USERREMINDERS, oldname);
     newfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "REM", USERFILES, USERREMINDERS, newname);
     rename(oldfile, newfile);
+    sdsfree(oldfile);
+    sdsfree(newfile);
     oldfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "U", USERFILES, USERFLAGGED, oldname);
     newfile = sdscatfmt(sdsempty(), "%s" DIRSEP "%s" DIRSEP "%s" EXTSEP "U", USERFILES, USERFLAGGED, newname);
     rename(oldfile, newfile);
+    sdsfree(oldfile);
+    sdsfree(newfile);
     /* give results of name change */
     sprintf(text, "Had name changed from ~OL%s~RS by %s~RS.\n", oldname,
             (self ? "self" : user->recap));
@@ -210,6 +232,4 @@ change_user_name(UR_OBJECT user)
                 "You have changed the name of ~OL%s~RS to ~OL%s~RS.\n\n",
                 oldname, newname);
     }
-    sdsfree(oldfile);
-    sdsfree(newfile);
 }

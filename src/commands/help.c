@@ -180,7 +180,6 @@ help_commands_level(UR_OBJECT user)
         highlight = 1;
         /* scroll through all commands, format and print */
         for (cmd = first_command; cmd; cmd = cmd->next) {
-            temp1 = sdsempty();
             if (cmd->level != lvl) {
                 continue;
             }
@@ -261,7 +260,6 @@ help_commands_function(UR_OBJECT user)
         *text = '\0';
         /* scroll through all commands, format and print */
         for (cmd = first_command; cmd; cmd = cmd->next) {
-            temp1 = sdsempty();
             if (cmd->level > user->level || cmd->function != function) {
                 continue;
             }
