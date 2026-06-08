@@ -58,10 +58,12 @@ extern const char *SDS_NOINIT;
 # endif
 /* Norcroft's "inline" keyword is "__inline" (extension). */
 # define inline __inline
-/* va_copy is C99; on Norcroft va_list is an array type (single-pass ABI),
- * so a byte-wise copy of the underlying storage is the closest equivalent. */
+/* va_copy is C99; Norcroft's va_list is an array type, so both dst and src
+ * already decay to pointers to the underlying state.  Copy the pointed-to
+ * bytes directly - do NOT take their addresses (that would copy the decayed
+ * pointer variable, not the va_list data, yielding garbage args). */
 # ifndef va_copy
-#  define va_copy(dst, src) memcpy(&(dst), &(src), sizeof(va_list))
+#  define va_copy(dst, src) memcpy((dst), (src), sizeof(va_list))
 # endif
 /* Norcroft has no C99 flexible array members; use a 1-byte stub so the
  * struct accepts dynamic trailing data via pointer arithmetic. */

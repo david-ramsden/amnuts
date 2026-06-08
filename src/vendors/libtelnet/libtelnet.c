@@ -51,11 +51,12 @@
 /* Norcroft 5.18 has no C99 __func__; fall back to a generic string so
  * the error reporting still compiles.  Keeps line numbers accurate. */
 # define __func__ "?"
-/* va_copy is C99; on Norcroft va_list is an array type, so emulate it via
- * a byte-wise copy of the underlying storage. */
+/* va_copy is C99; Norcroft's va_list is an array type, so dst and src already
+ * decay to pointers to the underlying state - copy the pointed-to bytes
+ * directly (taking their addresses would copy the pointer, not the data). */
 # include <string.h>
 # ifndef va_copy
-#  define va_copy(dst, src) memcpy(&(dst), &(src), sizeof(va_list))
+#  define va_copy(dst, src) memcpy((dst), (src), sizeof(va_list))
 # endif
 #endif
 
