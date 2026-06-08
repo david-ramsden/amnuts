@@ -54,7 +54,10 @@ user_xcom(UR_OBJECT user)
                 }
             }
             if (!cmd) {
-                /* XXX: Maybe emit some sort of error? */
+                /* stored ban references a command that no longer exists */
+                write_syslog(ERRLOG, 0,
+                        "xcom: user %s has unknown banned command id %d\n",
+                        u->name, u->xcoms[i]);
                 continue;
             }
             vwrite_user(user, "~OL%s~RS (level %d)\n", cmd->name, cmd->level);
@@ -99,7 +102,7 @@ user_xcom(UR_OBJECT user)
     if (has_xcom(u, cmd->id)) {
         /* user already has the command banned, so unban it */
         if (!set_xgcom(user, u, cmd->id, 1, 0)) {
-            /* XXX: Maybe emit some sort of error? */
+            /* set_xgcom() has already told the user why it failed */
             return;
         }
         vwrite_user(user, "You have unbanned the \"%s\" command for %s\n",
@@ -115,7 +118,7 @@ user_xcom(UR_OBJECT user)
     } else {
         /* user does not have the command banned, so ban it */
         if (!set_xgcom(user, u, cmd->id, 1, 1)) {
-            /* XXX: Maybe emit some sort of error? */
+            /* set_xgcom() has already told the user why it failed */
             return;
         }
         vwrite_user(user, "You have banned the \"%s\" command for %s\n", word[2],

@@ -3165,10 +3165,11 @@ load_user_details_old(UR_OBJECT user)
     fgets(line, 82, fp);
     line[strlen(line) - 1] = '\0';
     strcpy(user->date, line);
-    /* FIXME: use scanf "*" flag for discarding instead of redundant temps */
-    /* times, levels, and important stats */
-    fscanf(fp, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", &temp1,
-            &temp2, &user->last_login_len, &temp3, &temp1, &user->prompt, &temp2,
+    /* times, levels, and important stats.  Columns 1, 2 and 4 are legacy
+     * duplicates of the level/muzzle/arrest values that follow, so discard
+     * them with the scanf "*" flag rather than reading into throwaway temps. */
+    fscanf(fp, "%*d %*d %d %*d %d %d %d %d %d %d %d %d %d %d %d %d",
+            &user->last_login_len, &temp1, &user->prompt, &temp2,
             &user->charmode_echo, &user->command_mode, &user->vis,
             &user->monitor, &temp4, &user->logons, &user->accreq,
             &user->mail_verified, &temp3);
@@ -3309,18 +3310,20 @@ load_oldversion_user(UR_OBJECT user, int version)
         strcpy(user->date, long_date(1));
     }
     if (version >= 200) {
-        /* FIXME: use scanf "*" flag for discarding instead of redundant temps */
-        /* times, levels, and important stats */
-        fscanf(fp, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", &temp1, &temp2,
+        /* times, levels, and important stats.  Columns 1 and 2 are legacy
+         * duplicates of the level/muzzle values that follow; discard them
+         * with the scanf "*" flag. */
+        fscanf(fp, "%*d %*d %d %d %d %d %d %d %d %d %d %d %d %d %d",
                 &user->last_login_len, &temp3, &temp1, &user->prompt, &temp2,
                 &user->charmode_echo, &user->command_mode, &user->vis,
                 &user->monitor, &temp4, &user->logons, &user->accreq,
                 &user->mail_verified);
     } else {
-        /* FIXME: use scanf "*" flag for discarding instead of redundant temps */
-        /* times, levels, and important stats */
-        fscanf(fp, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", &temp1,
-                &temp2, &user->last_login_len, &temp3, &temp1, &user->prompt,
+        /* times, levels, and important stats.  Columns 1 and 2 are legacy
+         * duplicates of the level/muzzle values that follow; discard them
+         * with the scanf "*" flag. */
+        fscanf(fp, "%*d %*d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
+                &user->last_login_len, &temp3, &temp1, &user->prompt,
                 &temp2, &user->charmode_echo, &user->command_mode, &user->vis,
                 &user->monitor, &oldvote, &temp4, &user->logons,
                 &user->accreq, &user->mail_verified);

@@ -55,7 +55,10 @@ user_gcom(UR_OBJECT user)
                 }
             }
             if (!cmd) {
-                /* XXX: Maybe emit some sort of error? */
+                /* stored grant references a command that no longer exists */
+                write_syslog(ERRLOG, 0,
+                        "gcom: user %s has unknown given command id %d\n",
+                        u->name, u->gcoms[i]);
                 continue;
             }
             vwrite_user(user, "~OL%s~RS (level %d)\n", cmd->name, cmd->level);
@@ -103,7 +106,7 @@ user_gcom(UR_OBJECT user)
     if (has_gcom(u, cmd->id)) {
         /* user already has the command given, so ungive it */
         if (!set_xgcom(user, u, cmd->id, 0, 0)) {
-            /* XXX: Maybe emit some sort of error? */
+            /* set_xgcom() has already told the user why it failed */
             return;
         }
         vwrite_user(user, "You have removed the given command \"%s\" for %s~RS\n",
@@ -119,7 +122,7 @@ user_gcom(UR_OBJECT user)
     } else {
         /* user does not have the command given, so give it */
         if (!set_xgcom(user, u, cmd->id, 0, 1)) {
-            /* XXX: Maybe emit some sort of error? */
+            /* set_xgcom() has already told the user why it failed */
             return;
         }
         vwrite_user(user, "You have given the \"%s\" command for %s\n", word[2],

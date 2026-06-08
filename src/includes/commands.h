@@ -313,7 +313,7 @@ enum set_value {
 struct cmd_entry {
     const char *name;
     const char *alias;
-    int level; /* FIXME: Should be enum lvl_value */
+    enum lvl_value level;
     enum ct_value function;
 };
 

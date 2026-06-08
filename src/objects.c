@@ -943,9 +943,13 @@ get_user_name(UR_OBJECT user, const char *name)
             if (strlen(u->name) == len) {
                 break;
             }
-            /* FIXME: Bounds checking */
-            strcat(text, found++ % 8 ? "~RS  " : "\n  ");
-            strcat(text, u->recap);
+            /* append only while there is room, keeping space for the
+             * trailing "\n\n" written after the loop */
+            if (strlen(text) + strlen(u->recap) + 8 < sizeof(text)) {
+                strcat(text, found % 8 ? "~RS  " : "\n  ");
+                strcat(text, u->recap);
+            }
+            ++found;
             last = u;
         }
     }
@@ -989,9 +993,13 @@ retrieve_user(UR_OBJECT user, const char *name)
             if (strlen(entry->name) == len) {
                 break;
             }
-            /* FIXME: Bounds checking */
-            strcat(text, found++ % 8 ? "  " : "\n  ");
-            strcat(text, entry->name);
+            /* append only while there is room, keeping space for the
+             * trailing "\n\n" written after the loop */
+            if (strlen(text) + strlen(entry->name) + 8 < sizeof(text)) {
+                strcat(text, found % 8 ? "  " : "\n  ");
+                strcat(text, entry->name);
+            }
+            ++found;
             last = entry;
         }
     }
@@ -1079,17 +1087,23 @@ done_retrieve(UR_OBJECT user)
 RM_OBJECT
 get_room(const char *name)
 {
-    RM_OBJECT rm;
+    RM_OBJECT rm, partial;
     size_t len;
 
-    /* FIXME: exact match not checked for; use length for partial */
+    /* An exact (case-insensitive) match always wins; otherwise fall back to
+     * the first room whose name starts with the given prefix.  This stops an
+     * exact name being shadowed by an earlier, longer room name. */
     len = strlen(name);
+    partial = NULL;
     for (rm = room_first; rm; rm = rm->next) {
-        if (!strncasecmp(rm->name, name, len)) {
-            break;
+        if (!strcasecmp(rm->name, name)) {
+            return rm;
+        }
+        if (!partial && !strncasecmp(rm->name, name, len)) {
+            partial = rm;
         }
     }
-    return rm;
+    return partial;
 }
 
 /*

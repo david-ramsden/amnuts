@@ -764,8 +764,9 @@ process_input_string(char *inpstr, CMD_OBJECT defaultcmd)
     }
     if (*inpstr == '.') {
 #if !!0
-        /* FIXME: Check direction or use memmove() */
-        strcpy(word[0], word[0] + 1);
+        /* shift word[0] left one, dropping the leading '.'; memmove because
+         * the source and destination overlap (strcpy would be undefined) */
+        memmove(word[0], word[0] + 1, strlen(word[0]));
 #endif
         return remove_first(inpstr);
     }

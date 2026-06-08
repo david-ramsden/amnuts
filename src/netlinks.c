@@ -1506,13 +1506,14 @@ message_nl(UR_OBJECT user, const char *str)
     if (user->netlink->ver_major <= 3 && user->netlink->ver_minor < 2) {
         str = colour_com_strip(str);
     }
-    /* FIXME: Bounds Checking! */
-    if (str[strlen(str) - 1] != '\n') {
-        sprintf(buff, "%s %s\n%s\n%s\n", netcom[NLC_MESSAGE], user->name, str,
-                netcom[NLC_ENDMESSAGE]);
+    /* snprintf so an over-long message cannot overflow buff; guard the
+     * trailing-newline test against an empty string (strlen - 1 underflow) */
+    if (*str && str[strlen(str) - 1] != '\n') {
+        snprintf(buff, sizeof(buff), "%s %s\n%s\n%s\n", netcom[NLC_MESSAGE],
+                user->name, str, netcom[NLC_ENDMESSAGE]);
     } else {
-        sprintf(buff, "%s %s\n%s%s\n", netcom[NLC_MESSAGE], user->name, str,
-                netcom[NLC_ENDMESSAGE]);
+        snprintf(buff, sizeof(buff), "%s %s\n%s%s\n", netcom[NLC_MESSAGE],
+                user->name, str, netcom[NLC_ENDMESSAGE]);
     }
     write_sock(user->netlink->socket, buff);
     return 1;

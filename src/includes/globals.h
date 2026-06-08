@@ -329,9 +329,10 @@ struct list_users_struct {
 struct command_struct {
     char name[15]; /* 15 characters should be long enough */
     char alias[5]; /* 5 characters should be long enough */
-    int id; /* FIXME: Should be enum cmd_value */
+    int id;       /* holds an enum cmd_value; kept int because that enum is
+                   * defined in commands.h, which is included after globals.h */
     enum lvl_value level;
-    int function; /* FIXME: Should be enum ct_value */
+    int function; /* holds an enum ct_value; int for the same reason as id */
     int count;
     CMD_OBJECT next;
     CMD_OBJECT prev;
