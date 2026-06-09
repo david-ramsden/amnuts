@@ -252,7 +252,7 @@ dump_to_file(UR_OBJECT user)
         fprintf(fp, "Node name   : %s\n", amsys->uts.nodename);
         fprintf(fp, "Running on  : %s %s %s %s\n", amsys->uts.machine,
                 amsys->uts.sysname, amsys->uts.release, amsys->uts.version);
-        fprintf(fp, "Talker PID  : %u\n", getpid());
+        fprintf(fp, "Talker PID  : %lu\n", (unsigned long) getpid());
         fprintf(fp, "Booted      : %s\n", bstr);
         fprintf(fp,
                 "Uptime      : %d day%s, %d hour%s, %d minute%s, %d second%s\n",

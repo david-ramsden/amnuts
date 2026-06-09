@@ -204,4 +204,10 @@ char *strdup(const char *s)
     return p;
 }
 
+#else /* !__riscos */
+
+/* This file is RISC OS only; give non-RISC OS builds a declaration so the
+ * translation unit is not empty (ISO C forbids that; -Wpedantic warns). */
+typedef int riscos_posix_not_used;
+
 #endif /* __riscos */

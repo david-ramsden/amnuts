@@ -52,7 +52,7 @@ extern "C" {
 #endif
 
 /* printf type checking feature in GCC and some other compilers */
-#if __GNUC__
+#ifdef __GNUC__
 # define TELNET_GNU_PRINTF(f,a) __attribute__((format(printf, f, a))) /*!< internal helper */
 # define TELNET_GNU_SENTINEL __attribute__((sentinel)) /*!< internal helper */
 #else

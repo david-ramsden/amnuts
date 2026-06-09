@@ -340,7 +340,7 @@ const char *const command_types[] = {
 };
 
 const struct cmd_entry command_table[] = {
-#define ML_EXPAND(value,name,alias,level,type) { name, alias, level, CT_ ## type },
+#define ML_EXPAND(value,name,alias,level,type) { name, alias, (enum lvl_value) (level), CT_ ## type },
     CMD_LIST
 #undef ML_EXPAND
 };

@@ -40,9 +40,17 @@
 
 #include "libtelnet.h"
 
-/* inlinable functions */
-#if defined(__GNUC__) || __STDC_VERSION__ >= 199901L
+/* inlinable functions.  Nested rather than "defined(X) && X >= ..." because
+ * some preprocessors (e.g. Norcroft) still evaluate - and warn about - a bare
+ * undefined macro on the right of &&. */
+#if defined(__GNUC__)
 # define INLINE __inline__
+#elif defined(__STDC_VERSION__)
+#  if __STDC_VERSION__ >= 199901L
+#   define INLINE __inline__
+#  else
+#   define INLINE
+#  endif
 #else
 # define INLINE
 #endif

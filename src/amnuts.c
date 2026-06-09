@@ -175,12 +175,12 @@ main(int argc, char **argv)
     /* finish off the boot-up process */
     printf
             ("------------------------------------------------------------------------------\n");
-    printf("Booted with PID %u\n", getpid());
+    printf("Booted with PID %lu\n", (unsigned long) getpid());
     printf
             ("------------------------------------------------------------------------------\n\n");
     write_syslog(SYSLOG, 0,
-            "------------------------------------------------------------------------------\nSERVER BOOTED with PID %u %s\n",
-            getpid(), long_date(1));
+            "------------------------------------------------------------------------------\nSERVER BOOTED with PID %lu %s\n",
+            (unsigned long) getpid(), long_date(1));
     write_syslog(SYSLOG, 0,
             "------------------------------------------------------------------------------\n\n");
 
@@ -6283,7 +6283,8 @@ login_who(UR_OBJECT user)
             continue;
         }
         userText = sdscatfmt(sdsempty(), "%s %s", u->bw_recap, (u->afk ? "<AFK> " : u->malloc_start ? "<EDIT>" : "      "));
-        if ((len = ((USER_NAME_LEN + 7) - (int)sdslen(userText)))) {
+        len = (USER_NAME_LEN + 7) - (int) sdslen(userText);
+        if (len) {
             userText = sdscat(userText, repeat_string(" ", len));
         }
         lineText = sdscat(lineText, userText);
