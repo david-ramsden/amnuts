@@ -20,21 +20,14 @@ void
 set_command_level(UR_OBJECT user)
 {
     CMD_OBJECT cmd;
-    size_t len;
     enum lvl_value lvl;
 
     if (word_count < 3) {
         write_user(user, "Usage: setcmdlev <command name> <level>|norm\n");
         return;
     }
-    /* FIXME: command search order is different than command_table/exec_com()
-     * because it uses the alpha sorted command list instead! */
-    len = strlen(word[1]);
-    for (cmd = first_command; cmd; cmd = cmd->next) {
-        if (!strncmp(word[1], cmd->name, len)) {
-            break;
-        }
-    }
+    /* resolve the abbreviation with the same precedence as exec_com() */
+    cmd = find_command(word[1]);
     if (!cmd) {
         vwrite_user(user, "The command \"~OL%s~RS\" could not be found.\n",
                 word[1]);

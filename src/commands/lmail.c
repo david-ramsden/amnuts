@@ -19,6 +19,8 @@
 void
 level_mail(UR_OBJECT user, char *inpstr)
 {
+    char mailbuf[ARR_SIZE + 2];
+
     if (inpstr) {
         static const char usage[] = "Usage: lmail <level>|wizzes|all [<text>]\n";
 
@@ -71,8 +73,10 @@ level_mail(UR_OBJECT user, char *inpstr)
             editor(user, NULL);
             return;
         }
-        strcat(inpstr, "\n"); /* XXX: risky but hopefully it will be ok */
-        inpstr = remove_first(inpstr);
+        /* build "<text>\n" in a bounded local buffer rather than strcat'ing
+         * the newline onto the input buffer in place (which could overflow) */
+        snprintf(mailbuf, sizeof(mailbuf), "%s\n", remove_first(inpstr));
+        inpstr = mailbuf;
     } else {
         inpstr = user->malloc_start;
     }

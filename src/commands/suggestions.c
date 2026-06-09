@@ -22,6 +22,7 @@ suggestions(UR_OBJECT user, char *inpstr)
     char filename[30], *c;
     FILE *fp;
     int cnt;
+    int append_nl = 0;
 
     if (com_num == RSUG) {
         sprintf(filename, "%s" DIRSEP "%s", MISCFILES, SUGBOARD);
@@ -56,7 +57,10 @@ suggestions(UR_OBJECT user, char *inpstr)
             editor(user, NULL);
             return;
         }
-        strcat(inpstr, "\n"); /* XXX: risky but hopefully it will be ok */
+        /* single-line suggestion: the trailing newline (once appended to
+         * inpstr in place, which could overflow the input buffer) is now
+         * emitted straight to the file after the body below */
+        append_nl = 1;
     } else {
         inpstr = user->malloc_start;
     }
@@ -83,6 +87,9 @@ suggestions(UR_OBJECT user, char *inpstr)
             putc('\n', fp);
             cnt = 0;
         }
+    }
+    if (append_nl) {
+        putc('\n', fp);
     }
     putc('\n', fp);
     fclose(fp);

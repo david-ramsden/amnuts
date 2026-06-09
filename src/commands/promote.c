@@ -21,7 +21,7 @@ promote(UR_OBJECT user)
 {
     UR_OBJECT u;
     int on;
-    enum lvl_value lvl;
+    enum lvl_value lvl, cur;
 
     if (word_count < 2) {
         write_user(user, "Usage: promote <user> [<level>]\n");
@@ -36,20 +36,22 @@ promote(UR_OBJECT user)
         return;
     }
     on = retrieve_user_type == 1;
-    /* FIXME: lose .tpromote if .promote fails */
-    /* first, gotta reset the user level if they have been temp promoted */
+    /* Validate against the user's real (non-temp-promoted) level without
+     * mutating u->level, so a temporary promotion is not lost if this command
+     * bails out below; the temp level is only undone once we actually commit. */
+    cur = u->level;
     if (u->real_level < u->level) {
-        u->level = u->real_level;
+        cur = u->real_level;
     }
     /* cannot promote jailed users */
-    if (u->level == JAILED) {
+    if (cur == JAILED) {
         vwrite_user(user, "You cannot promote a user of level %s.\n",
                 user_level[JAILED].name);
         done_retrieve(u);
         return;
     }
     if (word_count < 3) {
-        lvl = (enum lvl_value) (u->level + 1);
+        lvl = (enum lvl_value) (cur + 1);
     } else {
         strtoupper(word[2]);
         lvl = get_level(word[2]);
@@ -59,7 +61,7 @@ promote(UR_OBJECT user)
             done_retrieve(u);
             return;
         }
-        if (lvl <= u->level) {
+        if (lvl <= cur) {
             write_user(user,
                     "You cannot promote a user to a level less than or equal to what they are now.\n");
             done_retrieve(u);

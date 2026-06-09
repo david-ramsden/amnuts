@@ -378,6 +378,7 @@ RM_OBJECT create_room(void);
 void destruct_room(RM_OBJECT);
 int add_command(enum cmd_value);
 int rem_command(enum cmd_value);
+CMD_OBJECT find_command(const char *abbrev);
 int add_user_node(const char *, enum lvl_value);
 int rem_user_node(const char *);
 void add_user_date_node(const char *, const char *);

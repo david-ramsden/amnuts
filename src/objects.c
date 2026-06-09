@@ -574,6 +574,38 @@ rem_command(enum cmd_value cmd_id)
 }
 
 /*
+ * Find the command-list node matching an abbreviation, using the same
+ * precedence as exec_com(): prefix-match against command_table[] in its
+ * canonical (insertion) order, then return the corresponding node from the
+ * alphabetical command list.  This keeps .xcom/.gcom/.setcmdlev resolving an
+ * abbreviation to the same command the user would actually run.
+ * Returns NULL if nothing matches or the node is not present.
+ */
+CMD_OBJECT
+find_command(const char *abbrev)
+{
+    const struct cmd_entry *com_tab;
+    CMD_OBJECT cmd;
+    size_t len;
+
+    len = strlen(abbrev);
+    for (com_tab = command_table; com_tab->name; ++com_tab) {
+        if (!strncmp(com_tab->name, abbrev, len)) {
+            break;
+        }
+    }
+    if (!com_tab->name) {
+        return NULL;
+    }
+    for (cmd = first_command; cmd; cmd = cmd->next) {
+        if ((enum cmd_value) cmd->id == (enum cmd_value) (com_tab - command_table)) {
+            return cmd;
+        }
+    }
+    return NULL;
+}
+
+/*
  * add a user node to the user linked list
  */
 int

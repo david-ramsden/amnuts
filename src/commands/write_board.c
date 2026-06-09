@@ -24,6 +24,7 @@ write_board(UR_OBJECT user, char *inpstr)
     char *c;
     FILE *fp;
     int cnt;
+    int append_nl = 0;
 
     if (inpstr) {
         /* FIXME: Use sentinel other JAILED */
@@ -45,7 +46,10 @@ write_board(UR_OBJECT user, char *inpstr)
             editor(user, NULL);
             return;
         }
-        strcat(inpstr, "\n"); /* XXX: risky but hopefully it will be ok */
+        /* single-line message: the trailing newline (once appended to inpstr
+         * in place, which could overflow the input buffer) is now emitted
+         * straight to the file after the body below */
+        append_nl = 1;
     } else {
         inpstr = user->malloc_start;
     }
@@ -108,6 +112,9 @@ write_board(UR_OBJECT user, char *inpstr)
             putc('\n', fp);
             cnt = 0;
         }
+    }
+    if (append_nl) {
+        putc('\n', fp);
     }
     putc('\n', fp);
     fclose(fp);

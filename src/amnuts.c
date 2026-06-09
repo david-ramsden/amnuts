@@ -6554,9 +6554,9 @@ check_macros(UR_OBJECT user, char *inpstr)
 
         *line = '\0';
         strncat(line, inpstr + 2, ARR_SIZE - 1);
-        /* FIXME: Bounds checking */
-        strcpy(inpstr, user->macros[macnum]);
-        strcat(inpstr, line);
+        /* expand to "<macro><rest of line>", bounded so it cannot overflow
+         * the input buffer (macro text plus args may exceed ARR_SIZE) */
+        snprintf(inpstr, ARR_SIZE, "%s%s", user->macros[macnum], line);
     } else {
         char filename[80];
         FILE *fp;

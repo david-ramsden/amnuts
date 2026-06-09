@@ -75,14 +75,8 @@ user_xcom(UR_OBJECT user)
                 "You cannot ban the commands of a user with the same or higher level as yourself.\n");
         return;
     }
-    /* FIXME: command search order is different than command_table/exec_com()
-     * because it uses the alpha sorted command list instead! */
-    i = strlen(word[2]);
-    for (cmd = first_command; cmd; cmd = cmd->next) {
-        if (!strncmp(word[2], cmd->name, i)) {
-            break;
-        }
-    }
+    /* resolve the abbreviation with the same precedence as exec_com() */
+    cmd = find_command(word[2]);
     if (!cmd) {
         write_user(user, "That command does not exist.\n");
         return;
