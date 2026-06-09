@@ -13,9 +13,18 @@
 #include "globals.h"
 #include "commands.h"
 #include "prototypes.h"
+#include <sys/ioctl.h>          /* ioctl()/FIONBIO for bounded connect() */
 #ifndef __SDS_H
 #include "./vendors/sds/sds.h"
 #endif
+
+/*
+ * Seconds to wait for an outgoing netlink connect() to complete before
+ * giving up.  A blocking connect() to an unreachable peer would otherwise
+ * stall the whole talker - indefinitely under RISC OS's cooperative
+ * scheduler, and for the full TCP timeout (~2 minutes) on Unix.
+ */
+#define NL_CONNECT_TIMEOUT 30
 
 #ifdef NETLINKS
 /**************************************************************************/
@@ -155,7 +164,8 @@ int
 socket_connect(const char *host, const char *serv)
 {
     struct sockaddr_in sa;
-    int s;
+    int s, on, err;
+    socklen_t errlen;
 
     sa.sin_family = AF_INET;
     sa.sin_port = htons(atoi(serv));
@@ -163,7 +173,7 @@ socket_connect(const char *host, const char *serv)
     if (sa.sin_addr.s_addr == (uint32_t) - 1) {
         struct hostent *he;
 
-        /* XXX: This may hang. */
+        /* XXX: This may hang (blocking resolver lookup). */
         he = gethostbyname(host);
         if (!he) {
             return -2;
@@ -174,10 +184,46 @@ socket_connect(const char *host, const char *serv)
     if (s == -1) {
         return -1;
     }
-    /* XXX: This may hang. */
+    /*
+     * Connect with a bounded timeout: make the socket non-blocking, start the
+     * connect, then wait (at most NL_CONNECT_TIMEOUT) for it to become
+     * writable.  This stops an unreachable peer hanging the whole talker.  The
+     * socket is restored to blocking before returning so the rest of the
+     * netlink code behaves exactly as before.
+     */
+    on = 1;
+    ioctl(s, FIONBIO, &on);
     if (connect(s, (struct sockaddr *) &sa, (sizeof sa)) == -1) {
-        return -1;
+        fd_set wfds;
+        struct timeval tv;
+
+        if (errno != EINPROGRESS
+#ifdef EWOULDBLOCK
+                && errno != EWOULDBLOCK
+#endif
+           ) {
+            close(s);
+            return -1;
+        }
+        FD_ZERO(&wfds);
+        FD_SET(s, &wfds);
+        tv.tv_sec = NL_CONNECT_TIMEOUT;
+        tv.tv_usec = 0;
+        if (select(s + 1, NULL, &wfds, NULL, &tv) <= 0) {
+            /* timed out (0) or select error (-1) */
+            close(s);
+            return -1;
+        }
+        /* writable: confirm the connect actually succeeded */
+        errlen = (socklen_t) sizeof(err);
+        if (getsockopt(s, SOL_SOCKET, SO_ERROR, &err, &errlen) == -1
+                || err != 0) {
+            close(s);
+            return -1;
+        }
     }
+    on = 0;
+    ioctl(s, FIONBIO, &on);
     return s;
 }
 
@@ -608,8 +654,9 @@ nl_transfer(NL_OBJECT nl, char *name, char *pass, enum lvl_value lvl,
         }
         u->unarrest = u->level;
     }
-    /* See if users level is below minlogin level */
-    if (u->level < amsys->minlogin_level) {
+    /* See if users level is below minlogin level (NUM_LEVELS means the
+     * minlogin restriction is disabled - matches the local login check) */
+    if (amsys->minlogin_level != NUM_LEVELS && u->level < amsys->minlogin_level) {
         if (nl->ver_major == 3 && nl->ver_minor >= 3 && nl->ver_patch >= 3) {
             /* new error for 3.3.3 */
             sprintf(text, "%s %s 8\n", netcom[NLC_DENIED], u->name);

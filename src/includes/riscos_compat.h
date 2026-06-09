@@ -126,6 +126,12 @@ extern int sigaction(int sig, const struct sigaction *act,
 #ifndef ENOTDIR
 # define ENOTDIR 20
 #endif
+#ifndef EWOULDBLOCK
+# define EWOULDBLOCK  35
+#endif
+#ifndef EINPROGRESS
+# define EINPROGRESS  36
+#endif
 #ifndef ECONNRESET
 # define ECONNRESET  54
 #endif
