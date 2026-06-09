@@ -72,7 +72,15 @@ talker_shutdown(UR_OBJECT user, const char *str, int sdboot)
     }
 #endif
     for (u = user_first; u; u = next) {
-        next = u->next;
+        /* disconnecting a user destroys that user's clones too, so skip past
+         * any clones when remembering the next node - otherwise next could
+         * point at a clone that disconnect_user() has just freed (mirrors the
+         * main loop's clone-destruction guard). */
+        for (next = u->next; next; next = next->next) {
+            if (next->type != CLONE_TYPE) {
+                break;
+            }
+        }
         disconnect_user(u);
     }
     close(amsys->mport_socket);
